@@ -6,8 +6,9 @@ const dir = require('node-dir')
 const fontkit = require('fontkit')
 const crypto = require('crypto')
 const express = require('express')
-const url = require('url')
 const memoize = require('fast-memoize')
+const middleware = require('./middleware')
+const has = require('./has')
 
 /**
  * Read & parse a YAML configuration file
@@ -16,12 +17,6 @@ const memoize = require('fast-memoize')
  */
 const readConfig = (filename) => yaml.safeLoad(fs.readFileSync(filename, 'utf8'))
 
-/**
- * 
- * @param {object} obj 
- * @param {string} key 
- */
-const has = (obj, key) => obj && hasOwnProperty.call(obj, key)
 
 /**
  * 
@@ -66,6 +61,7 @@ const config = readConfig('font-server.yaml')
 const fontDirectories = (has(config, 'global') && has(config.global, 'directories')) ? config.global.directories : []
 const fonts = findFonts(fontDirectories).map((filename) => {
     const font = fontkit.openSync(filename)
+
     return {
         filename: filename,
         type: fontType(font),
@@ -86,40 +82,33 @@ function fontFaceCSS(font, protocol) {
 }`
 }
 
-const fontWeight = () => {
+/**
+ * 
+ * @param {string} variant
+ * @return {number} 
+ */
+const fontVariantToCSSWeight = (variant) => {
+
+    const variants = {
+        'thin': 100,
+        'extra light': 200,
+        'light': 300,
+        'normal': 400,
+        'medium': 500,
+        'semi bold': 600,
+        'bold': 700,
+        'extra bold': 800,
+        'black': 900
+    }
+
+    return variants.includes(variant.toLowerCase()) ? 
+            variants[variant.toLowerCase()] : variants['normal']
 
 }
 
 const app = express()
 
-/**
- * Middleware to set CORS headers
- */
-app.use((req, res, next) => {
-    let refererDomain
-    const domains = (has(config, 'global') && has(config.global, 'domains')) ? config.global.domains : []
-
-    if(req.get('referer') && (refererDomain = url.parse(req.get('referer'))) && domains.includes(refererDomain.hostname)) {
-        res.setHeader('Access-Control-Allow-Origin',  refererDomain.protocol + '//' + refererDomain.host)
-        res.setHeader('Access-Control-Allow-Methods', 'GET')
-        next()
-    }
-    else {
-        res.sendStatus(403)
-    }
-})
-
-/**
- * Middleware to set caching headers
- */
-app.use((req, res, next) =>{
-    // 2628000 seconds = 30 days
-    if(res.statusCode === 200) {
-        res.setHeader('Cache-Control', 'max-age=2628000, public')
-        res.setHeader('Vary', 'Origin')
-    }
-    next()
-})
+middleware(app, config)
 
 /**
  * Route to serve fonts
