@@ -36,7 +36,7 @@ function findFonts(directories) {
  * @param {string} id
  * @return object
  */
-const findFont = (fonts, id) => fonts.filter((x) => x.uniqueID === id).pop()
+const findFont = memoize((fonts, id) => fonts.filter((x) => x.uniqueID === id).pop())
 
 /**
  * 
@@ -69,14 +69,14 @@ const fonts = findFonts(fontDirectories).map((filename) => {
     }
 })
 
-function fontFaceCSS(font, protocol) {
+const fontFaceCSS = memoize((font, protocol) => {
     return `@font-face {
   font-family: '${font.familyName}';
   font-style: normal;
   font-weight: 500;
   src: local('${font.fullName}'), local('${font.familyName}-${font.subfamilyName}'), url(/${font.uniqueID}.${font.type}) format('${font.type}');
 }`
-}
+})
 
 /**
  * 
