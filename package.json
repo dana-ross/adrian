@@ -1,0 +1,34 @@
+{
+  "name": "font-server",
+  "version": "1.0.0",
+  "description": "Font Server for web sites",
+  "main": "server.js",
+  "dependencies": {
+    "express": "^4.15.3",
+    "fast-memoize": "^2.2.7",
+    "fontkit": "^1.7.7",
+    "js-yaml": "^3.9.0",
+    "node-dir": "^0.1.17"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/daveross/adrian.git"
+  },
+  "keywords": [
+    "font",
+    "ttf",
+    "woff",
+    "otf"
+  ],
+  "author": "Dave Ross <dave@davidmichaelross.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/daveross/adrian/issues"
+  },
+  "homepage": "https://github.com/daveross/adrian#readme"
+}
