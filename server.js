@@ -9,11 +9,12 @@ const express = require('express')
 const memoize = require('fast-memoize')
 const middleware = require('./middleware')
 const has = require('./has')
+const fontWeights = require('css-font-weight-names')
 
 /**
  * Read & parse a YAML configuration file
  * @param {string} filename
- * @return {object} configuration 
+ * @return {Object} configuration 
  */
 const readConfig = (filename) => yaml.safeLoad(fs.readFileSync(filename, 'utf8'))
 
@@ -36,11 +37,12 @@ function findFonts(directories) {
  * @param {string} id
  * @return object
  */
-const findFont = memoize((fonts, id) => fonts.filter((x) => x.uniqueID === id).pop())
+const findFontByID = memoize((fonts, id) => fonts.filter((x) => x.uniqueID === id).pop())
+const findFontByName = memoize((fonts, name) => fonts.filter((x) => x.fullName === name).pop())
 
 /**
  * 
- * @param {object} font
+ * @param {Object} font
  * @return string 
  */
 function fontType(font) {
@@ -50,6 +52,29 @@ function fontType(font) {
         case 'WOFFFont': return 'woff'
         default: return ''
     }
+}
+
+/**
+ * Determine or guess a font's CSS weight
+ * @param {Object} font 
+ */
+function guessFontCSSWeight(fontWeights, font) {
+    
+    let fontVariant = font.subfamilyName.toLowerCase() 
+    if('regular' !== fontVariant) {
+        if(fontWeights.hasOwnProperty(fontVariant)) {
+            return fontWeights[fontVariant]
+        }
+    }
+
+    for(let fontWeightIndex in fontWeights) {
+        if(font.fullName.toLowerCase().replace(/( italic)$/, '').match(' ' + fontWeightIndex + '$')) {
+            return fontWeights[fontWeightIndex]
+        }
+    }
+
+    return fontWeights.regular
+
 }
 
 const config = readConfig('font-server.yaml')
@@ -70,37 +95,14 @@ const fonts = findFonts(fontDirectories).map((filename) => {
 })
 
 const fontFaceCSS = memoize((font, protocol) => {
+    const fontWeight = guessFontCSSWeight(fontWeights, font)
     return `@font-face {
   font-family: '${font.familyName}';
   font-style: normal;
-  font-weight: 500;
-  src: local('${font.fullName}'), local('${font.familyName}-${font.subfamilyName}'), url(/${font.uniqueID}.${font.type}) format('${font.type}');
-}`
+  font-weight: ${fontWeight};
+  src: local('${font.fullName}'), url(${font.uniqueID}.${font.type}) format('${font.type}');
+}`.split("\n").map((x) => x.replace(/^\s+/, '')).join(' ')
 })
-
-/**
- * 
- * @param {string} variant
- * @return {number} 
- */
-const fontVariantToCSSWeight = (variant) => {
-
-    const variants = {
-        'thin': 100,
-        'extra light': 200,
-        'light': 300,
-        'normal': 400,
-        'medium': 500,
-        'semi bold': 600,
-        'bold': 700,
-        'extra bold': 800,
-        'black': 900
-    }
-
-    return variants.includes(variant.toLowerCase()) ? 
-            variants[variant.toLowerCase()] : variants['normal']
-
-}
 
 const app = express()
 
@@ -110,14 +112,19 @@ middleware(app, config)
  * Route to serve fonts
  */
 app.get('/font/:id\.(otf|ttf|woff|woff2)', (req, res) => {
-    fs.createReadStream(findFont(fonts, req.params.id).filename).pipe(res)
+    fs.createReadStream(findFontByID(fonts, req.params.id).filename).pipe(res)
 })
 
 /**
  * Route to serve CSS
  */
 app.get('/font/:name\.css', (req, res)=> {
-    res.send(fontFaceCSS(fonts[0], req.protocol))
+    if(findFontByName(fonts, req.params.name)) {
+        res.send(fontFaceCSS(findFontByName(fonts, req.params.name), req.protocol))
+    }
+    else {
+        res.sendStatus(404)
+    }
 })
 
 app.listen(3000)

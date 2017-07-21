@@ -4,6 +4,7 @@
   "description": "Font Server for web sites",
   "main": "server.js",
   "dependencies": {
+    "css-font-weight-names": "^0.2.1",
     "express": "^4.15.3",
     "fast-memoize": "^2.2.7",
     "fontkit": "^1.7.7",
