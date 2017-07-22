@@ -1,2 +1,3 @@
 # adrian
-Web Font Server
+A platform for secure, performant web font hosting.
+
