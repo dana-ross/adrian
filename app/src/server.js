@@ -7,8 +7,8 @@ const fontkit = require('fontkit')
 const crypto = require('crypto')
 const express = require('express')
 const memoize = require('fast-memoize')
-const middleware = require('./src/middleware')
-const has = require('./src/has')
+const middleware = require('./middleware')
+const has = require('./has')
 const fontWeights = {
 	"thin": 100,
 	"extralight": 200,
