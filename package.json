@@ -4,6 +4,7 @@
   "description": "Font Server for web sites",
   "main": "server.js",
   "dependencies": {
+    "apicache": "^0.8.7",
     "express": "^4.15.3",
     "fontkit": "^1.7.7",
     "js-yaml": "^3.9.0",

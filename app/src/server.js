@@ -7,6 +7,7 @@ const fontkit = require('fontkit')
 const crypto = require('crypto')
 const express = require('express')
 const middleware = require('./middleware')
+const apicache = require('apicache')
 const has = require('./has')
 const fontWeights = {
 	"thin": 100,
@@ -122,6 +123,7 @@ const fontFaceCSS = (font, protocol) => {
 }
 
 const app = express()
+app.use(apicache.middleware('5 minutes'))
 
 middleware(app, config)
 
