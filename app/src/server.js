@@ -56,6 +56,7 @@ function findFonts(directories) {
  */
 const findFontByID = memoize((fonts, id) => fonts.filter((x) => x.uniqueID === id).pop())
 const findFontByName = memoize((fonts, name) => fonts.filter((x) => x.fullName === name).pop())
+const findFontsByFamilyName = (fonts, name) => fonts.filter((x) => x.fullName.toLowerCase().startsWith(name.toLowerCase()))
 
 /**
  * 
@@ -85,7 +86,7 @@ function guessFontCSSWeight(fontWeights, font) {
     }
 
     for(let fontWeightIndex in fontWeights) {
-        if(font.fullName.toLowerCase().replace(/( italic)$/, '').match(' ' + fontWeightIndex + '$')) {
+        if(font.fullName.toLowerCase().replace(/( italic)$/, '').endsWith(' ' + fontWeightIndex)) {
             return fontWeights[fontWeightIndex]
         }
     }
@@ -138,6 +139,17 @@ app.get('/font/:id\.(otf|ttf|woff|woff2)', (req, res) => {
 app.get('/font/:name\.css', (req, res)=> {
     if(findFontByName(fonts, req.params.name)) {
         res.send(fontFaceCSS(findFontByName(fonts, req.params.name), req.protocol))
+    }
+    else {
+        res.sendStatus(404)
+    }
+})
+
+app.get('/font/family/:name.css', (req, res) => {
+    const familyMembers = findFontsByFamilyName(fonts, req.params.name)
+    if(familyMembers.length) {
+        familyMembers.forEach((font) => res.write(fontFaceCSS(font)) + "\n")
+        res.end()
     }
     else {
         res.sendStatus(404)
