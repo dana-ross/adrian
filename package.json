@@ -5,7 +5,6 @@
   "main": "server.js",
   "dependencies": {
     "express": "^4.15.3",
-    "fast-memoize": "^2.2.7",
     "fontkit": "^1.7.7",
     "js-yaml": "^3.9.0",
     "node-dir": "^0.1.17"

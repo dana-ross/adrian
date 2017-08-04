@@ -6,7 +6,6 @@ const dir = require('node-dir')
 const fontkit = require('fontkit')
 const crypto = require('crypto')
 const express = require('express')
-const memoize = require('fast-memoize')
 const middleware = require('./middleware')
 const has = require('./has')
 const fontWeights = {
@@ -54,8 +53,8 @@ function findFonts(directories) {
  * @param {string} id
  * @return object
  */
-const findFontByID = memoize((fonts, id) => fonts.filter((x) => x.uniqueID === id).pop())
-const findFontByName = memoize((fonts, name) => fonts.filter((x) => x.fullName === name).pop())
+const findFontByID = (fonts, id) => fonts.filter((x) => x.uniqueID === id).pop()
+const findFontByName = (fonts, name) => fonts.filter((x) => x.fullName === name).pop()
 const findFontsByFamilyName = (fonts, name) => fonts.filter((x) => x.fullName.toLowerCase().startsWith(name.toLowerCase()))
 
 /**
@@ -112,7 +111,7 @@ const fonts = findFonts(fontDirectories).map((filename) => {
     }
 })
 
-const fontFaceCSS = memoize((font, protocol) => {
+const fontFaceCSS = (font, protocol) => {
     const fontWeight = guessFontCSSWeight(fontWeights, font)
     return `@font-face {
   font-family: '${font.familyName}';
@@ -120,7 +119,7 @@ const fontFaceCSS = memoize((font, protocol) => {
   font-weight: ${fontWeight};
   src: local('${font.fullName}'), url(${font.uniqueID}.${font.type}) format('${font.type}');
 }`.split("\n").map((x) => x.replace(/^\s+/, '')).join(' ')
-})
+}
 
 const app = express()
 
