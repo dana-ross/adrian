@@ -18,6 +18,19 @@ Adrian is written in [Node.js](https://nodejs.org/en/), and you will need Node.j
 
 Test it by loading a font CSS file, such as http://example.com/font/Arial.css (replace `example.com` with your server's hostname and `Arial.css` with the name of a font available to Adrian.
 
+#### Configuring
+##### domains
+A whitelist of domains allowed to use fonts hosted by this instance
+
+##### directories
+A list of directories where Adrian should look for font files. On Linux, system-wide fonts are stored in `/usr/share/fonts`.
+
+Supported font formats:
+* otf
+* ttf
+* woff
+* woff2
+
 ## Built With
 
 * [Express](https://expressjs.com/) - The web framework used
