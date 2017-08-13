@@ -95,7 +95,7 @@ function guessFontCSSWeight(fontWeights, font) {
 
 }
 
-const config = readConfig('font-server.yaml')
+const config = readConfig('adrian.yaml')
 
 const fontDirectories = (has(config, 'global') && has(config.global, 'directories')) ? config.global.directories : []
 const fonts = findFonts(fontDirectories).map((filename) => {
