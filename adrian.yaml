@@ -1,8 +1,8 @@
 global:
   domains:
-    - davidmichaelross.com
+    - example.com
+    - example.org
     - localhost
-    - statetable.com
   directories:
-    - "/mnt/c/Users/dave/Desktop/fonts"
+    - "/usr/share/fonts"
 
