@@ -127,8 +127,6 @@ const fonts = findFonts(fontDirectories).map((filename) => {
     }
 })
 
-console.log(fonts)
-
 const fontFaceCSS = (font, protocol) => {
     const fontWeight = guessFontCSSWeight(fontWeights, font)
     return `@font-face {
