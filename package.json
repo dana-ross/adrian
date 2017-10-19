@@ -10,7 +10,12 @@
     "js-yaml": "^3.9.0",
     "node-dir": "^0.1.17"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "iconv-lite": "^0.4.19",
+    "transform-loader": "^0.2.4",
+    "webpack": "^3.7.1",
+    "webpack-node-externals": "^1.6.0"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
