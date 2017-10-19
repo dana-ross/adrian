@@ -101,6 +101,12 @@ const cacheLifetime = parseInt((has(config, 'global') ? config.global['cache lif
 
 const fontDirectories = (has(config, 'global') && has(config.global, 'directories')) ? config.global.directories : []
 
+/**
+ * Assign a unique ID to the font, either a code or the font's name
+ * @param {Object} config 
+ * @param {Object} font 
+ * @return {String}
+ */
 const fontUniqueID = (config, font) => {
     const configFontKey = Object.keys(config).filter((k) => k !== 'global').reduce(((a,k) => font.fullName.toLowerCase().startsWith(k.toLowerCase()) ? k : a), null)
     const obfuscate = (configFontKey && has(config[configFontKey], 'obfuscate filenames')) ? (config[configFontKey]['obfuscate filenames'] === true) : true
