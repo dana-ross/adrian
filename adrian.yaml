@@ -5,4 +5,4 @@ global:
     - localhost
   directories:
     - "/usr/share/fonts"
-
+  cache lifetime: 10
