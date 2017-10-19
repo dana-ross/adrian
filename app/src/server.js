@@ -38,7 +38,7 @@ const readConfig = (filename) => yaml.safeLoad(fs.readFileSync(filename, 'utf8')
 
 /**
  * 
- * @param {array[string]} directories 
+ * @param {Array<string>} directories 
  */
 function findFonts(directories) {
     return directories.map((directory) => {
@@ -100,6 +100,7 @@ const config = readConfig('adrian.yaml')
 const cacheLifetime = parseInt((has(config, 'global') ? config.global['cache lifetime'] : null) || '5') + ' minutes'
 
 const fontDirectories = (has(config, 'global') && has(config.global, 'directories')) ? config.global.directories : []
+
 const fonts = findFonts(fontDirectories).map((filename) => {
     const font = fontkit.openSync(filename)
 
