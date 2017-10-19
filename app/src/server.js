@@ -38,7 +38,7 @@ const readConfig = (filename) => yaml.safeLoad(fs.readFileSync(filename, 'utf8')
 
 /**
  * 
- * @param {array[string]} directories 
+ * @param {Array<string>} directories 
  */
 function findFonts(directories) {
     return directories.map((directory) => {
@@ -100,6 +100,19 @@ const config = readConfig('adrian.yaml')
 const cacheLifetime = parseInt((has(config, 'global') ? config.global['cache lifetime'] : null) || '5') + ' minutes'
 
 const fontDirectories = (has(config, 'global') && has(config.global, 'directories')) ? config.global.directories : []
+
+/**
+ * Assign a unique ID to the font, either a code or the font's name
+ * @param {Object} config 
+ * @param {Object} font 
+ * @return {String}
+ */
+const fontUniqueID = (config, font) => {
+    const configFontKey = Object.keys(config).filter((k) => k !== 'global').reduce(((a,k) => font.fullName.toLowerCase().startsWith(k.toLowerCase()) ? k : a), null)
+    const obfuscate = (configFontKey && has(config[configFontKey], 'obfuscate filenames')) ? (config[configFontKey]['obfuscate filenames'] === true) : true
+    return obfuscate ? crypto.createHash('sha256').update(font.familyName + ' ' + font.subfamilyName).digest('hex') : font.fullName
+}
+
 const fonts = findFonts(fontDirectories).map((filename) => {
     const font = fontkit.openSync(filename)
 
@@ -110,7 +123,7 @@ const fonts = findFonts(fontDirectories).map((filename) => {
         familyName: font.familyName,
         subfamilyName: font.subfamilyName,
         copyright: font.copyright,
-        uniqueID: crypto.createHash('sha256').update(font.familyName + ' ' + font.subfamilyName).digest('hex')
+        uniqueID: fontUniqueID(config, font) 
     }
 })
 
@@ -138,7 +151,6 @@ app.get('/font/:id\.(otf|ttf|woff|woff2)', (req, res) => {
 /**
  * Route to serve CSS
  */
-app.get('/font/:name\.css', apicache.middleware('5 minutes'), (req, res)=> {
 app.get('/font/:name\.css', apicache.middleware(cacheLifetime), (req, res)=> {
     if(findFontByName(fonts, req.params.name)) {
         res.send(fontFaceCSS(findFontByName(fonts, req.params.name), req.protocol))
@@ -148,7 +160,6 @@ app.get('/font/:name\.css', apicache.middleware(cacheLifetime), (req, res)=> {
     }
 })
 
-app.get('/font/family/:name.css', apicache.middleware('5 minutes'), (req, res) => {
 app.get('/font/family/:name.css', apicache.middleware(cacheLifetime), (req, res) => {
     const familyMembers = findFontsByFamilyName(fonts, req.params.name)
     if(familyMembers.length) {
