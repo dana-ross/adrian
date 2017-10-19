@@ -97,6 +97,8 @@ function guessFontCSSWeight(fontWeights, font) {
 
 const config = readConfig('adrian.yaml')
 
+const cacheLifetime = parseInt((has(config, 'global') ? config.global['cache lifetime'] : null) || '5') + ' minutes'
+
 const fontDirectories = (has(config, 'global') && has(config.global, 'directories')) ? config.global.directories : []
 const fonts = findFonts(fontDirectories).map((filename) => {
     const font = fontkit.openSync(filename)
@@ -137,6 +139,7 @@ app.get('/font/:id\.(otf|ttf|woff|woff2)', (req, res) => {
  * Route to serve CSS
  */
 app.get('/font/:name\.css', apicache.middleware('5 minutes'), (req, res)=> {
+app.get('/font/:name\.css', apicache.middleware(cacheLifetime), (req, res)=> {
     if(findFontByName(fonts, req.params.name)) {
         res.send(fontFaceCSS(findFontByName(fonts, req.params.name), req.protocol))
     }
@@ -146,6 +149,7 @@ app.get('/font/:name\.css', apicache.middleware('5 minutes'), (req, res)=> {
 })
 
 app.get('/font/family/:name.css', apicache.middleware('5 minutes'), (req, res) => {
+app.get('/font/family/:name.css', apicache.middleware(cacheLifetime), (req, res) => {
     const familyMembers = findFontsByFamilyName(fonts, req.params.name)
     if(familyMembers.length) {
         familyMembers.forEach((font) => res.write(fontFaceCSS(font)) + "\n")
