@@ -101,6 +101,12 @@ const cacheLifetime = parseInt((has(config, 'global') ? config.global['cache lif
 
 const fontDirectories = (has(config, 'global') && has(config.global, 'directories')) ? config.global.directories : []
 
+const fontUniqueID = (config, font) => {
+    const configFontKey = Object.keys(config).filter((k) => k !== 'global').reduce(((a,k) => font.fullName.toLowerCase().startsWith(k.toLowerCase()) ? k : a), null)
+    const obfuscate = (configFontKey && has(config[configFontKey], 'obfuscate filenames')) ? (config[configFontKey]['obfuscate filenames'] === true) : true
+    return obfuscate ? crypto.createHash('sha256').update(font.familyName + ' ' + font.subfamilyName).digest('hex') : font.fullName
+}
+
 const fonts = findFonts(fontDirectories).map((filename) => {
     const font = fontkit.openSync(filename)
 
@@ -111,9 +117,11 @@ const fonts = findFonts(fontDirectories).map((filename) => {
         familyName: font.familyName,
         subfamilyName: font.subfamilyName,
         copyright: font.copyright,
-        uniqueID: crypto.createHash('sha256').update(font.familyName + ' ' + font.subfamilyName).digest('hex')
+        uniqueID: fontUniqueID(config, font) 
     }
 })
+
+console.log(fonts)
 
 const fontFaceCSS = (font, protocol) => {
     const fontWeight = guessFontCSSWeight(fontWeights, font)

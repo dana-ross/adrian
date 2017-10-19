@@ -1,3 +1,5 @@
+%YAML 1.2
+---
 global:
   domains:
     - example.com
@@ -6,5 +8,6 @@ global:
   directories:
     - "/usr/share/fonts"
   cache lifetime: 10
- Lato:
-  obfuscate filenames: false
+  
+Lato:
+  obfuscate filenames: true
