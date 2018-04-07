@@ -42,7 +42,7 @@ const readConfig = (filename) => yaml.safeLoad(fs.readFileSync(filename, 'utf8')
  */
 function findFonts(directories) {
     return directories.map((directory) => {
-        return dir.files(directory, { sync: true }).filter(
+        return (dir.files(directory, { sync: true }) || []).filter(
             (filename) => filename.match(/\/([^.])[^\/]*\.(otf|ttf|woff|woff2)$/i)
         )
     }).reduce((a,b) => a.concat(b))

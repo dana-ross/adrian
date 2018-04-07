@@ -1,0 +1,10 @@
+version: '3'
+services:
+  adrian:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - /c/Windows/Fonts/:/usr/share/fonts:ro
+    ports:
+      - 80:3000

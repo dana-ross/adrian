@@ -6,7 +6,7 @@
   "dependencies": {
     "apicache": "^0.8.7",
     "express": "^4.15.3",
-    "fontkit": "^1.7.7",
+    "fontkit": "^1.7.8",
     "js-yaml": "^3.9.0",
     "node-dir": "^0.1.17"
   },
@@ -18,7 +18,7 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "node app/src/server.js"
   },
   "repository": {
     "type": "git",
