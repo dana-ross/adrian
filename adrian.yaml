@@ -8,6 +8,3 @@ global:
   directories:
     - "/usr/share/fonts"
   cache lifetime: 10
-  
-Lato:
-  obfuscate filenames: true

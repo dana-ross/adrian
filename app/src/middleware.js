@@ -11,6 +11,15 @@ const url = require('url')
 module.exports = (app, config) => {
 
     /**
+     * Middleware to set X-Powered-By header
+     */
+    app.use((req, res, next) => {
+        res.removeHeader("X-Powered-By")
+        res.setHeader('X-Powered-By', 'Adrian 1.0')
+        next()
+    })
+
+    /**
      * Middleware to set CORS headers
      */
     app.use((req, res, next) => {
