@@ -25,8 +25,12 @@ module.exports = (app, config) => {
     app.use((req, res, next) => {
         let refererDomain
         const domains = (has(config, 'global') && has(config.global, 'domains')) ? config.global.domains : []
+        const debug = (has(config, 'global') && has(config.global, 'debug')) ? config.global.debug : false
 
-        if (req.get('referer') && (refererDomain = url.parse(req.get('referer'))) && domains.includes(refererDomain.hostname)) {
+        if (debug) {
+            next()
+        }
+        else if(req.get('referer') && (refererDomain = url.parse(req.get('referer'))) && domains.includes(refererDomain.hostname)) {
             res.setHeader('Access-Control-Allow-Origin', refererDomain.protocol + '//' + refererDomain.host)
             res.setHeader('Access-Control-Allow-Methods', 'GET')
             next()

@@ -1,6 +1,7 @@
 %YAML 1.2
 ---
 global:
+  debug: false
   domains:
     - example.com
     - example.org
