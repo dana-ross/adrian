@@ -1,6 +1,6 @@
 // @ts-check
 
-const express = require('express')
+const express = require('polka')
 const has = require('./has')
 const url = require('url')
 
@@ -30,12 +30,13 @@ module.exports = (app, config) => {
         if (debug) {
             next()
         }
-        else if(req.get('referer') && (refererDomain = url.parse(req.get('referer'))) && domains.includes(refererDomain.hostname)) {
+        else if(req.headers.referer && (refererDomain = url.parse(req.headers.referer)) && domains.includes(refererDomain.hostname)) {
             res.setHeader('Access-Control-Allow-Origin', refererDomain.protocol + '//' + refererDomain.host)
             res.setHeader('Access-Control-Allow-Methods', 'GET')
             next()
         } else {
-            res.sendStatus(403)
+            res.statusCode = 403
+            res.end()
         }
     })
 
