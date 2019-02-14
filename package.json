@@ -14,6 +14,7 @@
     "iconv-lite": "^0.4.19",
     "transform-loader": "^0.2.4",
     "webpack": "^4.29.3",
+    "webpack-cli": "^3.2.3",
     "webpack-node-externals": "^1.6.0"
   },
   "scripts": {
