@@ -18,6 +18,21 @@ Adrian is written in [Node.js](https://nodejs.org/en/), and you will need Node.j
 
 Test it by loading a font CSS file, such as http://example.com/font/Arial.css (replace `example.com` with your server's hostname and `Arial.css` with the name of a font available to Adrian.
 
+### docker-compose
+When running Adrian through `docker-compose`, don't forget to mount a `fonts` directory containing the fonts you want served, and your own configuration file. For example:
+
+```yaml
+version: '3'
+services:
+  adrian:
+    build: 'https://github.com/daveross/adrian.git'
+    volumes:
+      - './fonts:/usr/share/fonts'
+      - './adrian.yaml:/usr/src/app/adrian.yaml'
+    ports:
+      - '3000:3000'
+```
+
 #### Configuring
 ##### domains
 A whitelist of domains allowed to use fonts hosted by this instance
