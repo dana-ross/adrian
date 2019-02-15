@@ -4,11 +4,11 @@
   "description": "Font Server for web sites",
   "main": "server.js",
   "dependencies": {
-    "apicache": "^0.8.7",
-    "express": "^4.15.3",
+    "apicache": "github:daveross/apicache#feature/nodejs-http",
     "fontkit": "^1.7.8",
     "js-yaml": "^3.9.0",
-    "node-dir": "^0.1.17"
+    "node-dir": "^0.1.17",
+    "polka": "^0.5.2"
   },
   "devDependencies": {
     "@webpack-cli/migrate": "^0.1.3",
