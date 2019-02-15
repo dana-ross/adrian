@@ -5,6 +5,7 @@
   "main": "server.js",
   "dependencies": {
     "apicache": "^0.8.7",
+    "console-stamp": "^0.2.7",
     "express": "^4.15.3",
     "fontkit": "^1.7.8",
     "js-yaml": "^3.9.0",

@@ -9,6 +9,7 @@ const express = require('express')
 const middleware = require('./middleware')
 const apicache = require('apicache')
 const has = require('./has')
+const logger = require('./logger')
 const fontWeights = {
 	"thin": 100,
 	"extralight": 200,
@@ -45,7 +46,7 @@ function findFonts(directories) {
         return (dir.files(directory, { sync: true }) || []).filter(
             (filename) => filename.match(/\/([^.])[^\/]*\.(otf|ttf|woff|woff2)$/i)
         )
-    }).reduce((a,b) => a.concat(b))
+    }).reduce((a,b) => a.concat(b)).map((filename) => { logger.log(`Found font ${filename}`); return filename;})
 }
 
 /**
@@ -171,4 +172,5 @@ app.get('/font/family/:name.css', apicache.middleware(cacheLifetime), (req, res)
     }
 })
 
+logger.log('Listening on port 3000')
 app.listen(3000)
