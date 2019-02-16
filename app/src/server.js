@@ -101,7 +101,8 @@ const fonts = {}
 const watcher = chokidar.watch(fontDirectories.map((x) => path.resolve(x)), {
     // ignores .dotfiles
     ignored: /(^|[\/\\])\../,
-    persistent: true
+    persistent: true,
+    awaitWriteFinish: true
 })
 
 /**
@@ -137,7 +138,7 @@ const addFont = (path, log = true) => {
 /**
  * Remove a font from the index
  * @param {string} path 
- * @param {boolean} log 
+ * @param {boolean} log
  * @returns {boolean} if a font was detected at path and removed from the index
  */
 const deleteFont = (path, log = true) => {
@@ -156,7 +157,7 @@ watcher.on('unlink', deleteFont)
 watcher.on('change', (path) => {
     deleteFont(path. false)
     addFont(path, false) && logger.log(`Updated font ${path}`)
-} )
+})
 
 /**
  * Assign a unique ID to the font, either a code or the font's name
