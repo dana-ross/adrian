@@ -14,7 +14,7 @@ const apicache = require('apicache')
 const has = require('./has')
 const logger = require('./logger')
 const chokidar = require('chokidar')
-const path = require("path")
+const path = require('path')
 const fontWeights = {
 	"thin": 100,
 	"extralight": 200,
