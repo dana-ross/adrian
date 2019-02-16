@@ -13,6 +13,7 @@ Adrian is written in [Node.js](https://nodejs.org/en/), and you will need Node.j
 ### Installing
 
 1. Clone the repository and `cd` into the directory
+1. `npm install`
 1. Edit `adrian.yaml` to configure
 1. `node app/src/server.js` to start the server
 
