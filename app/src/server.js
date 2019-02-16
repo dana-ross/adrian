@@ -8,7 +8,7 @@ const fs = require('fs')
 const dir = require('node-dir')
 const fontkit = require('fontkit')
 const crypto = require('crypto')
-const express = require('express')
+const express = require('polka')
 const middleware = require('./middleware')
 const apicache = require('apicache')
 const has = require('./has')
@@ -183,36 +183,41 @@ const fontFaceCSS = (font, protocol) => {
 
 const app = express()
 
-middleware(app, config)
+middleware(app, config);
 
 /**
- * Route to serve fonts
+ * Routes to serve fonts
  */
-app.get('/font/:id\.(otf|ttf|woff|woff2)', (req, res) => {
-    fs.createReadStream(findFontByID(fonts, req.params.id).filename).pipe(res)
-})
+(function () {
+    ['otf', 'ttf', 'woff', 'woff2'].forEach((extension) => {
+        app.get(`/font/:id\.${extension}`, (req, res) => {
+            fs.createReadStream(findFontByID(fonts, req.params.id).filename).pipe(res)
+        })
+    })
+}())
 
 /**
  * Route to serve CSS
  */
 app.get('/font/:name\.css', apicache.middleware(cacheLifetime), (req, res)=> {
     if(findFontByName(fonts, req.params.name)) {
-        res.send(fontFaceCSS(findFontByName(fonts, req.params.name), req.protocol))
+        res.write(fontFaceCSS(findFontByName(fonts, req.params.name), req.protocol))
     }
     else {
-        res.sendStatus(404)
+        res.statusCode = 404
     }
+    res.end()
 })
 
 app.get('/font/family/:name.css', apicache.middleware(cacheLifetime), (req, res) => {
     const familyMembers = findFontsByFamilyName(fonts, req.params.name)
     if(familyMembers.length) {
         familyMembers.forEach((font) => res.write(fontFaceCSS(font)) + "\n")
-        res.end()
     }
     else {
-        res.sendStatus(404)
+        res.statusCode = 404
     }
+    res.end()
 })
 
 logger.log(`Listening on port ${port}`)
