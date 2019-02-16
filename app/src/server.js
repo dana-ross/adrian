@@ -105,9 +105,10 @@ const watcher = chokidar.watch(fontDirectories.map((x) => path.resolve(x)), {
 })
 
 /**
- * 
+ * Add a font to the index
  * @param {string} path 
  * @param {boolean} log 
+ * @returns {boolean} if a font was detected at path and added to the index
  */
 const addFont = (path, log = true) => { 
     if(path.match(/\/([^.])[^\/]*\.(otf|ttf|woff|woff2)$/i)) {
@@ -134,9 +135,10 @@ const addFont = (path, log = true) => {
 }
 
 /**
- * 
+ * Remove a font from the index
  * @param {string} path 
  * @param {boolean} log 
+ * @returns {boolean} if a font was detected at path and removed from the index
  */
 const deleteFont = (path, log = true) => {
     if(fonts[path]) {
