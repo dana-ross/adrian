@@ -1,5 +1,8 @@
 // @ts-check
 
+const VERSION = '1.0'
+let port = 3000
+
 const yaml = require('js-yaml')
 const fs = require('fs')
 const dir = require('node-dir')
@@ -10,6 +13,8 @@ const middleware = require('./middleware')
 const apicache = require('apicache')
 const has = require('./has')
 const logger = require('./logger')
+const chokidar = require('chokidar')
+const path = require("path")
 const fontWeights = {
 	"thin": 100,
 	"extralight": 200,
@@ -29,6 +34,8 @@ const fontWeights = {
 	"heavy": 900
 }
 
+logger.log(`Starting Adrian ${VERSION}`)
+
 /**
  * Read & parse a YAML configuration file
  * @param {string} filename
@@ -36,28 +43,15 @@ const fontWeights = {
  */
 const readConfig = (filename) => yaml.safeLoad(fs.readFileSync(filename, 'utf8'))
 
-
-/**
- * 
- * @param {Array<string>} directories 
- */
-function findFonts(directories) {
-    return directories.map((directory) => {
-        return (dir.files(directory, { sync: true }) || []).filter(
-            (filename) => filename.match(/\/([^.])[^\/]*\.(otf|ttf|woff|woff2)$/i)
-        )
-    }).reduce((a,b) => a.concat(b)).map((filename) => { logger.log(`Found font ${filename}`); return filename;})
-}
-
 /**
  * 
  * @param {array[object]} fonts 
  * @param {string} id
  * @return object
  */
-const findFontByID = (fonts, id) => fonts.filter((x) => x.uniqueID === id).pop()
-const findFontByName = (fonts, name) => fonts.filter((x) => x.fullName === name).pop()
-const findFontsByFamilyName = (fonts, name) => fonts.filter((x) => x.fullName.toLowerCase().startsWith(name.toLowerCase()))
+const findFontByID = (fonts, id) => Object.values(fonts).filter((x) => x.uniqueID === id).pop()
+const findFontByName = (fonts, name) => Object.values(fonts).filter((x) => x.fullName === name).pop()
+const findFontsByFamilyName = (fonts, name) => Object.values(fonts).filter((x) => x.fullName.toLowerCase().startsWith(name.toLowerCase()))
 
 /**
  * 
@@ -101,6 +95,66 @@ const config = readConfig('adrian.yaml')
 const cacheLifetime = parseInt((has(config, 'global') ? config.global['cache lifetime'] : null) || '5') + ' minutes'
 
 const fontDirectories = (has(config, 'global') && has(config.global, 'directories')) ? config.global.directories : []
+const fonts = {}
+
+// Initialize watcher.
+const watcher = chokidar.watch(fontDirectories.map((x) => path.resolve(x)), {
+    // ignores .dotfiles
+    ignored: /(^|[\/\\])\../,
+    persistent: true
+})
+
+/**
+ * 
+ * @param {string} path 
+ * @param {boolean} log 
+ */
+const addFont = (path, log = true) => { 
+    if(path.match(/\/([^.])[^\/]*\.(otf|ttf|woff|woff2)$/i)) {
+        const font = fontkit.openSync(path)
+
+        fonts[path] = {
+            filename: path,
+            type: fontType(font),
+            fullName: font.fullName,
+            familyName: font.familyName,
+            subfamilyName: font.subfamilyName,
+            copyright: font.copyright,
+            uniqueID: fontUniqueID(config, font) 
+        }
+
+        apicache.clear(null)
+
+        if(log) { logger.log(`Added font ${path}`) }
+
+        return true
+    }
+
+    return false
+}
+
+/**
+ * 
+ * @param {string} path 
+ * @param {boolean} log 
+ */
+const deleteFont = (path, log = true) => {
+    if(fonts[path]) {
+        apicache.clear(null)
+        delete fonts[path]
+        if(log) { logger.log(`Removed font ${path}`) }
+        return true
+    }
+
+    return false
+}
+
+watcher.on('add', addFont)
+watcher.on('unlink', deleteFont)
+watcher.on('change', (path) => {
+    deleteFont(path. false)
+    addFont(path, false) && logger.log(`Updated font ${path}`)
+} )
 
 /**
  * Assign a unique ID to the font, either a code or the font's name
@@ -113,20 +167,6 @@ const fontUniqueID = (config, font) => {
     const obfuscate = (configFontKey && has(config[configFontKey], 'obfuscate filenames')) ? (config[configFontKey]['obfuscate filenames'] === true) : true
     return obfuscate ? crypto.createHash('sha256').update(font.familyName + ' ' + font.subfamilyName).digest('hex') : font.fullName
 }
-
-const fonts = findFonts(fontDirectories).map((filename) => {
-    const font = fontkit.openSync(filename)
-
-    return {
-        filename: filename,
-        type: fontType(font),
-        fullName: font.fullName,
-        familyName: font.familyName,
-        subfamilyName: font.subfamilyName,
-        copyright: font.copyright,
-        uniqueID: fontUniqueID(config, font) 
-    }
-})
 
 const fontFaceCSS = (font, protocol) => {
     const fontWeight = guessFontCSSWeight(fontWeights, font)
@@ -172,5 +212,5 @@ app.get('/font/family/:name.css', apicache.middleware(cacheLifetime), (req, res)
     }
 })
 
-logger.log('Listening on port 3000')
-app.listen(3000)
+logger.log(`Listening on port ${port}`)
+app.listen(port)
