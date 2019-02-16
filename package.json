@@ -4,6 +4,9 @@
   "description": "Font Server for web sites",
   "main": "server.js",
   "dependencies": {
+    "chokidar": "^2.1.1",
+    "console-stamp": "^0.2.7",
+    "express": "^4.15.3",
     "apicache": "github:daveross/apicache#feature/nodejs-http",
     "fontkit": "^1.7.8",
     "js-yaml": "^3.9.0",
