@@ -200,8 +200,8 @@ middleware(app, config);
  * Route to serve CSS
  */
 app.get('/font/:name\.css', apicache.middleware(cacheLifetime), (req, res)=> {
-    if(findFontByName(fonts, req.params.name)) {
-        res.write(fontFaceCSS(findFontByName(fonts, req.params.name), req.protocol))
+    if(findFontByName(fonts, decodeURIComponent(req.params.name))) {
+        res.write(fontFaceCSS(findFontByName(fonts, decodeURIComponent(req.params.name)), req.protocol))
     }
     else {
         res.statusCode = 404
@@ -210,7 +210,7 @@ app.get('/font/:name\.css', apicache.middleware(cacheLifetime), (req, res)=> {
 })
 
 app.get('/font/family/:name.css', apicache.middleware(cacheLifetime), (req, res) => {
-    const familyMembers = findFontsByFamilyName(fonts, req.params.name)
+    const familyMembers = findFontsByFamilyName(fonts, decodeURIComponent(req.params.name))
     if(familyMembers.length) {
         familyMembers.forEach((font) => res.write(fontFaceCSS(font)) + "\n")
     }
