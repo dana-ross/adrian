@@ -127,7 +127,7 @@ const addFont = (path, log = true) => {
 
         apicache.clear(null)
 
-        if(log) { logger.log(`Added font ${path}`) }
+        if(log) { logger.log(`Added font ${font.fullName} @ ${path}`) }
 
         return true
     }
