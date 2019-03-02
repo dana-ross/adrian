@@ -19,6 +19,8 @@ func main() {
 	config := adrianConfig.LoadConfig("./adrian.yaml")
 	log.Println("Initializing web server")
 	e := adrianServer.Instantiate(config)
+	log.Println("Loading fonts")
+	adrianFonts.FindFonts("C:\\Users\\dave\\go")
 	log.Println("Instantiating font watcher")
 	adrianFonts.InstantiateWatcher("C:\\Users\\dave\\go")
 	log.Println("Defining paths")

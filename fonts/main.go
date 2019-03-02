@@ -8,10 +8,22 @@ import (
 	"github.com/ConradIrwin/font/sfnt"
 )
 
-var fonts []*sfnt.Font
+// FontData describes a font file and the various metadata associated with it.
+type FontData struct {
+	Path      string
+	Name      string
+	Family    string
+	SubFamily string
+	CSSWeight int
+	FileName  string
+	Metadata  map[sfnt.NameID]string
+	// Data     []byte
+}
+
+var fonts []FontData
 
 // LoadFont loads a font into memory
-func LoadFont(path string) *sfnt.Font {
+func LoadFont(path string) FontData {
 	file, err := os.Open(path)
 	if err != nil {
 		log.Fatal(err)
@@ -22,10 +34,45 @@ func LoadFont(path string) *sfnt.Font {
 		log.Fatal(parseError)
 	}
 
-	fonts = append(fonts, font)
-	return font
+	fontData := FontData{
+		Path:     "",
+		Metadata: make(map[sfnt.NameID]string),
+	}
+
+	nameTable, err := font.NameTable()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for _, nameEntry := range nameTable.List() {
+		fontData.Metadata[nameEntry.NameID] = nameEntry.String()
+	}
+	fontData.Name = fontData.Metadata[sfnt.NameFull]
+	if fontData.Name == "" {
+		log.Fatalf("Font has no name! Using file name instead.")
+	}
+
+	fontData.Family = fontData.Metadata[sfnt.NamePreferredFamily]
+	if fontData.Family == "" {
+		if v, ok := fontData.Metadata[sfnt.NameFontFamily]; ok {
+			fontData.Family = v
+		} else {
+			log.Fatalf("Font %v has no font family!", fontData.Name)
+		}
+	}
+
+	fontData.SubFamily = fontData.Metadata[sfnt.NameFontSubfamily]
+
+	fontData.CSSWeight = guessFontCSSWeight(fontData)
+
+	fonts = append(fonts, fontData)
+	return fontData
 }
 
+// ListFonts is something
 func ListFonts() {
-	fmt.Print(fonts)
+	for _, font := range fonts {
+		font.Metadata = make(map[sfnt.NameID]string)
+		fmt.Println(font)
+	}
 }

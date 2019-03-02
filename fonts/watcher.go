@@ -2,11 +2,28 @@ package fonts
 
 import (
 	"fmt"
+	"io/ioutil"
 	"log"
+	"path"
 	"time"
 
 	"github.com/fsnotify/fsnotify"
 )
+
+// FindFonts loads all the fonts in a directory
+func FindFonts(fontsPath string) {
+	filesInfo, err := ioutil.ReadDir(fontsPath)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for _, fileInfo := range filesInfo {
+		if fileInfo.IsDir() == false {
+			LoadFont(path.Join(fontsPath, fileInfo.Name()))
+		}
+	}
+}
 
 // InstantiateWatcher is a thing
 func InstantiateWatcher(path string) {
@@ -26,7 +43,6 @@ func InstantiateWatcher(path string) {
 			for {
 				select {
 				case event := <-watcher.Events:
-					// log.Printf("inotify event %s", event)
 
 					if event.Op&fsnotify.Write == fsnotify.Write {
 						if timers[event.Name] != nil {
@@ -42,13 +58,11 @@ func InstantiateWatcher(path string) {
 
 				case err := <-watcher.Errors:
 					log.Printf("Got error watching %s, calling watcher func", err)
-				case tick := <-timerChan:
-					log.Println(tick)
+				case path := <-timerChan:
+					LoadFont(path)
 				}
 			}
 		}()
-
-		log.Printf("Start watching file %s", path)
 
 		err = watcher.Add(path)
 
