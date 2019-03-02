@@ -1,9 +1,10 @@
 package fonts
 
 import (
-	"fmt"
+	"errors"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/ConradIrwin/font/sfnt"
 )
@@ -69,10 +70,14 @@ func LoadFont(path string) FontData {
 	return fontData
 }
 
-// ListFonts is something
-func ListFonts() {
-	for _, font := range fonts {
-		font.Metadata = make(map[sfnt.NameID]string)
-		fmt.Println(font)
+// GetFont returns the data for a single font
+func GetFont(name string) (fontData FontData, err error) {
+	name = strings.ToLower(name)
+	for _, fontData := range fonts {
+		if strings.ToLower(fontData.Name) == name {
+			return fontData, nil
+		}
 	}
+
+	return FontData{}, errors.New("Font not found")
 }

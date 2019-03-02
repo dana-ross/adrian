@@ -27,6 +27,13 @@ func main() {
 	e.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "Hello, World!")
 	})
+	e.GET("/font/:font/", func(c echo.Context) error {
+		fontData, err := adrianFonts.GetFont(c.Param("font"))
+		if err != nil {
+			return c.String(http.StatusNotFound, fmt.Sprintf("Could not find the requested font"))
+		}
+		return c.String(http.StatusOK, adrianFonts.FontFaceCSS(fontData, c.Scheme()))
+	})
 
 	log.Printf("Listening on port %d", config.Global.Port)
 	e.Logger.Fatal(e.Start(fmt.Sprintf(":%d", config.Global.Port)))
