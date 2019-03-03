@@ -27,7 +27,7 @@ func main() {
 	e.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "Hello, World!")
 	})
-	e.GET("/font/:font/", func(c echo.Context) error {
+	e.GET("/font/:font", func(c echo.Context) error {
 		fontData, err := adrianFonts.GetFont(c.Param("font"))
 		if err != nil {
 			return c.String(http.StatusNotFound, fmt.Sprintf("Could not find the requested font"))

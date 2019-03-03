@@ -1,9 +1,13 @@
 package fonts
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"errors"
 	"log"
 	"os"
+	"path"
+	"regexp"
 	"strings"
 
 	"github.com/ConradIrwin/font/sfnt"
@@ -15,17 +19,19 @@ type FontData struct {
 	Name      string
 	Family    string
 	SubFamily string
+	Type      string
+	CSSFormat string
 	CSSWeight int
 	FileName  string
+	UniqueID  string
 	Metadata  map[sfnt.NameID]string
-	// Data     []byte
 }
 
 var fonts []FontData
 
 // LoadFont loads a font into memory
-func LoadFont(path string) FontData {
-	file, err := os.Open(path)
+func LoadFont(filePath string) FontData {
+	file, err := os.Open(filePath)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -36,7 +42,9 @@ func LoadFont(path string) FontData {
 	}
 
 	fontData := FontData{
-		Path:     "",
+		Path:     filePath,
+		FileName: path.Base(filePath),
+		Type:     strings.ToLower(regexp.MustCompile("^\\.").ReplaceAllLiteralString(path.Ext(filePath), "")),
 		Metadata: make(map[sfnt.NameID]string),
 	}
 
@@ -64,7 +72,10 @@ func LoadFont(path string) FontData {
 
 	fontData.SubFamily = fontData.Metadata[sfnt.NameFontSubfamily]
 
+	fontData.UniqueID = calcUniqueID(fontData)
+
 	fontData.CSSWeight = guessFontCSSWeight(fontData)
+	fontData.CSSFormat = fontCSSFormat(fontData)
 
 	fonts = append(fonts, fontData)
 	return fontData
@@ -80,4 +91,21 @@ func GetFont(name string) (fontData FontData, err error) {
 	}
 
 	return FontData{}, errors.New("Font not found")
+}
+
+// calcUniqueID generates a unique ID for a font, optionally obfuscating it
+func calcUniqueID(fontData FontData) string {
+	hash := sha256.New()
+	hash.Write([]byte(fontData.Family + fontData.SubFamily))
+	return hex.EncodeToString(hash.Sum(nil))
+}
+
+// fontCSSFormat determines the appropriate CSS font format given a FontData struct with Type set
+func fontCSSFormat(fontData FontData) string {
+	switch fontData.Type {
+	case "ttf":
+		return "truetype"
+	default:
+		return fontData.Type
+	}
 }
