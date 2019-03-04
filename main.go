@@ -20,18 +20,19 @@ func main() {
 	log.Println("Initializing web server")
 	e := adrianServer.Instantiate(config)
 	log.Println("Loading fonts")
-	adrianFonts.FindFonts("C:\\Users\\dave\\go")
+	adrianFonts.FindFonts("C:\\Users\\dave\\go", config)
 	log.Println("Instantiating font watcher")
-	adrianFonts.InstantiateWatcher("C:\\Users\\dave\\go")
+	adrianFonts.InstantiateWatcher("C:\\Users\\dave\\go", config)
 	log.Println("Defining paths")
 	e.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "Hello, World!")
 	})
-	e.GET("/font/:font", func(c echo.Context) error {
+	e.GET("/font/css/:font", func(c echo.Context) error {
 		fontData, err := adrianFonts.GetFont(c.Param("font"))
 		if err != nil {
 			return c.String(http.StatusNotFound, fmt.Sprintf("Could not find the requested font"))
 		}
+		c.Response().Header().Set(echo.HeaderContentType, "text/css")
 		return c.String(http.StatusOK, adrianFonts.FontFaceCSS(fontData, c.Scheme()))
 	})
 

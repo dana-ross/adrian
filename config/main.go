@@ -11,11 +11,12 @@ import (
 // Config represents the YAML config file
 type Config struct {
 	Global struct {
-		Debug          bool
-		Port           uint16
-		Domains        []string
-		AllowedOrigins []string
-		Directories    []string
+		Debug              bool
+		Port               uint16
+		Domains            []string
+		AllowedOrigins     []string
+		Directories        []string
+		ObfuscateFilenames bool `yaml:"obfuscate filenames,omitempty"`
 	}
 }
 
@@ -39,5 +40,6 @@ func LoadConfig(filename string) Config {
 		config.Global.AllowedOrigins = append(config.Global.AllowedOrigins, fmt.Sprintf("https://%s", o))
 	}
 
+	fmt.Println(config.Global.ObfuscateFilenames)
 	return config
 }

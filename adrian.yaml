@@ -7,3 +7,4 @@ global:
     - localhost
   directories:
       - "/usr/share/fonts"
+  obfuscate filenames: false

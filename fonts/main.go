@@ -10,6 +10,7 @@ import (
 	"regexp"
 	"strings"
 
+	adrianConfig "Adrian2.0/config"
 	"github.com/ConradIrwin/font/sfnt"
 )
 
@@ -30,7 +31,7 @@ type FontData struct {
 var fonts []FontData
 
 // LoadFont loads a font into memory
-func LoadFont(filePath string) FontData {
+func LoadFont(filePath string, config adrianConfig.Config) FontData {
 	file, err := os.Open(filePath)
 	if err != nil {
 		log.Fatal(err)
@@ -72,7 +73,7 @@ func LoadFont(filePath string) FontData {
 
 	fontData.SubFamily = fontData.Metadata[sfnt.NameFontSubfamily]
 
-	fontData.UniqueID = calcUniqueID(fontData)
+	fontData.UniqueID = calcUniqueID(fontData, config)
 
 	fontData.CSSWeight = guessFontCSSWeight(fontData)
 	fontData.CSSFormat = fontCSSFormat(fontData)
@@ -94,10 +95,14 @@ func GetFont(name string) (fontData FontData, err error) {
 }
 
 // calcUniqueID generates a unique ID for a font, optionally obfuscating it
-func calcUniqueID(fontData FontData) string {
-	hash := sha256.New()
-	hash.Write([]byte(fontData.Family + fontData.SubFamily))
-	return hex.EncodeToString(hash.Sum(nil))
+func calcUniqueID(fontData FontData, config adrianConfig.Config) string {
+	if config.Global.ObfuscateFilenames {
+		hash := sha256.New()
+		hash.Write([]byte(fontData.Family + fontData.SubFamily))
+		return hex.EncodeToString(hash.Sum(nil))
+	}
+
+	return fontData.Family
 }
 
 // fontCSSFormat determines the appropriate CSS font format given a FontData struct with Type set

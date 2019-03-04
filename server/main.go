@@ -26,9 +26,9 @@ func Instantiate(config adrianConfig.Config) *echo.Echo {
 		Level: 5,
 	}))
 
-	e.Use(middleware.AddTrailingSlashWithConfig(middleware.TrailingSlashConfig{
-		RedirectCode: http.StatusMovedPermanently,
-	}))
+	// e.Use(middleware.AddTrailingSlashWithConfig(middleware.TrailingSlashConfig{
+	// 	RedirectCode: http.StatusMovedPermanently,
+	// }))
 
 	e.Use(adrianMiddleware.SetServerHeader)
 

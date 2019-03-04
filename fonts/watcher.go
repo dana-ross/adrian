@@ -7,11 +7,12 @@ import (
 	"path"
 	"time"
 
+	adrianConfig "Adrian2.0/config"
 	"github.com/fsnotify/fsnotify"
 )
 
 // FindFonts loads all the fonts in a directory
-func FindFonts(fontsPath string) {
+func FindFonts(fontsPath string, config adrianConfig.Config) {
 	filesInfo, err := ioutil.ReadDir(fontsPath)
 
 	if err != nil {
@@ -20,13 +21,13 @@ func FindFonts(fontsPath string) {
 
 	for _, fileInfo := range filesInfo {
 		if fileInfo.IsDir() == false {
-			LoadFont(path.Join(fontsPath, fileInfo.Name()))
+			LoadFont(path.Join(fontsPath, fileInfo.Name()), config)
 		}
 	}
 }
 
 // InstantiateWatcher is a thing
-func InstantiateWatcher(path string) {
+func InstantiateWatcher(path string, config adrianConfig.Config) {
 	go func() {
 		watcher, err := fsnotify.NewWatcher()
 		if err != nil {
@@ -59,7 +60,7 @@ func InstantiateWatcher(path string) {
 				case err := <-watcher.Errors:
 					log.Printf("Got error watching %s, calling watcher func", err)
 				case path := <-timerChan:
-					LoadFont(path)
+					LoadFont(path, config)
 				}
 			}
 		}()
