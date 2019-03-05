@@ -84,11 +84,22 @@ func LoadFont(filePath string, config adrianConfig.Config) FontData {
 	return fontData
 }
 
-// GetFont returns the data for a single font
+// GetFont returns the data for a single font by its name
 func GetFont(name string) (fontData FontData, err error) {
 	name = strings.ToLower(name)
 	for _, fontData := range fonts {
 		if strings.ToLower(fontData.Name) == name {
+			return fontData, nil
+		}
+	}
+
+	return FontData{}, errors.New("Font not found")
+}
+
+// GetFontByUniqueID returns the data for a single font by its unique ID
+func GetFontByUniqueID(uniqueID string) (fontData FontData, err error) {
+	for _, fontData := range fonts {
+		if fontData.UniqueID == uniqueID {
 			return fontData, nil
 		}
 	}

@@ -66,7 +66,7 @@ func basename(s string) string {
 }
 
 func outputFont(c echo.Context, mimeType string) error {
-	fontData, err := adrianFonts.GetFont(basename(c.Param("filename")))
+	fontData, err := adrianFonts.GetFontByUniqueID(basename(c.Param("filename")))
 	if err != nil {
 		return adrianServer.Return404(c)
 	}
