@@ -40,6 +40,5 @@ func LoadConfig(filename string) Config {
 		config.Global.AllowedOrigins = append(config.Global.AllowedOrigins, fmt.Sprintf("https://%s", o))
 	}
 
-	fmt.Println(config.Global.ObfuscateFilenames)
 	return config
 }
