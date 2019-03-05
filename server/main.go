@@ -26,12 +26,15 @@ func Instantiate(config adrianConfig.Config) *echo.Echo {
 		Level: 5,
 	}))
 
-	// e.Use(middleware.AddTrailingSlashWithConfig(middleware.TrailingSlashConfig{
-	// 	RedirectCode: http.StatusMovedPermanently,
-	// }))
-
 	e.Use(adrianMiddleware.SetServerHeader)
 
 	return e
 
+}
+
+// Return404 sends an appropriate message back to the browser on a 404
+func Return404(c echo.Context) error {
+	status := make(map[string]string)
+	status["message"] = "Not Found"
+	return c.JSON(http.StatusNotFound, status)
 }

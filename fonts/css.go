@@ -3,7 +3,7 @@ package fonts
 import "fmt"
 
 // FontFaceCSS generates the CSS for a font
-func FontFaceCSS(font FontData, protocol string) string {
+func FontFaceCSS(font FontData) string {
 
 	return fmt.Sprintf(`@font-face {
   font-family: '%s';

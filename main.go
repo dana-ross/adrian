@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"path/filepath"
+	"strings"
 
 	adrianConfig "Adrian2.0/config"
 	adrianFonts "Adrian2.0/fonts"
@@ -19,23 +21,35 @@ func main() {
 	config := adrianConfig.LoadConfig("./adrian.yaml")
 	log.Println("Initializing web server")
 	e := adrianServer.Instantiate(config)
-	log.Println("Loading fonts")
-	adrianFonts.FindFonts("C:\\Users\\dave\\go", config)
-	log.Println("Instantiating font watcher")
-	adrianFonts.InstantiateWatcher("C:\\Users\\dave\\go", config)
+	log.Println("Loading fonts and starting watchers")
+	for _, folder := range config.Global.Directories {
+		adrianFonts.FindFonts(folder, config)
+		adrianFonts.InstantiateWatcher(folder, config)
+	}
 	log.Println("Defining paths")
-	e.GET("/", func(c echo.Context) error {
-		return c.String(http.StatusOK, "Hello, World!")
-	})
-	e.GET("/font/css/:font", func(c echo.Context) error {
-		fontData, err := adrianFonts.GetFont(c.Param("font"))
-		if err != nil {
-			return c.String(http.StatusNotFound, fmt.Sprintf("Could not find the requested font"))
+
+	e.GET("/font/css/:filename", func(c echo.Context) error {
+		if filepath.Ext(c.Param("filename")) == ".css" {
+			fontData, err := adrianFonts.GetFont(basename(c.Param("filename")))
+			if err != nil {
+				return adrianServer.Return404(c)
+			}
+			c.Response().Header().Set(echo.HeaderContentType, "text/css")
+			return c.String(http.StatusOK, fontData.CSS)
 		}
-		c.Response().Header().Set(echo.HeaderContentType, "text/css")
-		return c.String(http.StatusOK, adrianFonts.FontFaceCSS(fontData, c.Scheme()))
+
+		return adrianServer.Return404(c)
 	})
 
 	log.Printf("Listening on port %d", config.Global.Port)
 	e.Logger.Fatal(e.Start(fmt.Sprintf(":%d", config.Global.Port)))
+}
+
+// Basename gets the base filename (minus the last extension)
+func basename(s string) string {
+	n := strings.LastIndexByte(s, '.')
+	if n >= 0 {
+		return s[:n]
+	}
+	return s
 }

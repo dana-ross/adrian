@@ -23,6 +23,7 @@ type FontData struct {
 	Type      string
 	CSSFormat string
 	CSSWeight int
+	CSS       string
 	FileName  string
 	UniqueID  string
 	Metadata  map[sfnt.NameID]string
@@ -77,6 +78,7 @@ func LoadFont(filePath string, config adrianConfig.Config) FontData {
 
 	fontData.CSSWeight = guessFontCSSWeight(fontData)
 	fontData.CSSFormat = fontCSSFormat(fontData)
+	fontData.CSS = FontFaceCSS(fontData)
 
 	fonts = append(fonts, fontData)
 	return fontData
