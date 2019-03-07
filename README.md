@@ -10,7 +10,7 @@ Basically, it lets you serve fonts for your sites from a central location so the
 
 ### Prerequisites
 
-Adrian is written in [Node.js](https://nodejs.org/en/), and you will need Node.js installed to run it.
+Adrian is written in [Go](https://golang.org/).
 
 ### Installing
 
@@ -64,8 +64,9 @@ Get one CSS file for muliple fonts by separating the names with commas. For exam
 
 ## Built With
 
-* [Polka](https://github.com/lukeed/polka) - The web framework used
-* [Fontkit](https://github.com/devongovett/fontkit) - Font file parsing
+* [Go](https://golang.org/)
+* [Echo](https://echo.labstack.com/) - The web framework used
+* [sfnt](https://github.com/ConradIrwin/font/tree/master/sfnt) - Font file parsing
 
 ## Contributing
 
