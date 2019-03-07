@@ -54,9 +54,6 @@ Supported font formats:
 ## http://example.com/font/Arial%20Bold.css
 Generates CSS for including the Arial Bold font file in a web project.
 
-## http://example.com/font/family/Arial.css
-Generates CSS for including the entire Arial font family in a web project.
-
 ## Built With
 
 * [Polka](https://github.com/lukeed/polka) - The web framework used
