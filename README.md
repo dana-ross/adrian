@@ -1,4 +1,4 @@
-# Adrian: A platform for secure, performant web font hosting.
+# Adrian: A platform for secure, performant web font hosting
 
 NOTE: Adrian is under active development & major architectural changes and is not ready for use.
 
@@ -22,6 +22,7 @@ Adrian is written in [Node.js](https://nodejs.org/en/), and you will need Node.j
 Test it by loading a font CSS file, such as http://example.com/font/Arial.css (replace `example.com` with your server's hostname and `Arial.css` with the name of a font available to Adrian.
 
 ### docker-compose
+
 When running Adrian through `docker-compose`, don't forget to mount a `fonts` directory containing the fonts you want served, and your own configuration file. For example:
 
 ```yaml
@@ -37,21 +38,26 @@ services:
 ```
 
 #### Configuring
+
 ##### domains
+
 A whitelist of domains allowed to use fonts hosted by this instance
 
 ##### directories
+
 A list of directories where Adrian should look for font files. On Linux, system-wide fonts are stored in `/usr/share/fonts`.
 
 Supported font formats:
+
 * otf
 * ttf
 * woff
 * woff2
 
-# Usage
+## Usage
 
-## http://example.com/font/Arial%20Bold.css
+### http://example.com/font/Arial%20Bold.css
+
 Generates CSS for including the Arial Bold font file in a web project.
 
 ## Built With
