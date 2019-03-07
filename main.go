@@ -32,12 +32,18 @@ func main() {
 	e.GET("/font/:filename", func(c echo.Context) error {
 		switch filepath.Ext(c.Param("filename")) {
 		case ".css":
-			fontData, err := adrianFonts.GetFont(basename(c.Param("filename")))
-			if err != nil {
-				return adrianServer.Return404(c)
-			}
 			c.Response().Header().Set(echo.HeaderContentType, "text/css")
-			return c.String(http.StatusOK, fontData.CSS)
+			fontFilenames := strings.Split(basename(c.Param("filename")), ",")
+			var fontsCSS string
+			for _, fontFilename := range fontFilenames {
+				fmt.Println(fontFilename)
+				fontData, err := adrianFonts.GetFont(fontFilename)
+				if err != nil {
+					return adrianServer.Return404(c)
+				}
+				fontsCSS = fontsCSS + "\n" + fontData.CSS
+			}
+			return c.String(http.StatusOK, fontsCSS)
 		case ".ttf":
 			return outputFont(c, "font/ttf")
 		case ".woff":

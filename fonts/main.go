@@ -80,6 +80,7 @@ func LoadFont(filePath string, config adrianConfig.Config) FontData {
 	fontData.CSSFormat = fontCSSFormat(fontData)
 	fontData.CSS = fontFaceCSS(fontData)
 
+	log.Printf("Loaded font: %s", fontData.Name)
 	fonts = append(fonts, fontData)
 	return fontData
 }
