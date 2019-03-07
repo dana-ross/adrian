@@ -60,6 +60,8 @@ Supported font formats:
 
 Generates CSS for including the Arial Bold font file in a web project.
 
+Get one CSS file for muliple fonts by separating the names with commas. For example: http://example.com/font/Arial,Courier%20New.css
+
 ## Built With
 
 * [Polka](https://github.com/lukeed/polka) - The web framework used
