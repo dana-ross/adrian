@@ -78,7 +78,7 @@ func LoadFont(filePath string, config adrianConfig.Config) FontData {
 
 	fontData.CSSWeight = guessFontCSSWeight(fontData)
 	fontData.CSSFormat = fontCSSFormat(fontData)
-	fontData.CSS = FontFaceCSS(fontData)
+	fontData.CSS = fontFaceCSS(fontData)
 
 	fonts = append(fonts, fontData)
 	return fontData

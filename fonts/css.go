@@ -2,8 +2,8 @@ package fonts
 
 import "fmt"
 
-// FontFaceCSS generates the CSS for a font
-func FontFaceCSS(font FontData) string {
+// fontFaceCSS generates the CSS for a font
+func fontFaceCSS(font FontData) string {
 
 	return fmt.Sprintf(`@font-face {
   font-family: '%s';
