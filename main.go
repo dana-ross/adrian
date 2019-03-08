@@ -39,6 +39,18 @@ func main() {
 				return adrianServer.Return404(c)
 			}
 			fontsCSS = fontsCSS + "\n" + fontData.CSS
+
+			pusher, ok := c.Response().Writer.(http.Pusher)
+			if ok {
+				// Attempt HTTP/2 Server Push with native support
+				if err = pusher.Push(fmt.Sprintf("/font/%s.%s", fontData.UniqueID, fontData.Type), nil); err != nil {
+					log.Fatal("Could not http/2 server push " + fontData.UniqueID + " " + fontData.Type)
+				}
+				log.Println("Pushing font")
+			} else {
+				// Send a Link: header in case an upstream web server supports HTTP/2 server push
+				c.Response().Header().Set("Link", fmt.Sprintf("/font/%s.%s>; rel=preload; as=font", fontData.UniqueID, fontData.Type))
+			}
 		}
 		return c.String(http.StatusOK, fontsCSS)
 	})
