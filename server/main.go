@@ -16,6 +16,8 @@ func Instantiate(config adrianConfig.Config) *echo.Echo {
 	e.HideBanner = true
 	e.HidePort = true
 
+	e.Pre(middleware.AddTrailingSlash())
+
 	e.Use(adrianMiddleware.LockedDownCORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: config.Global.AllowedOrigins,
 		AllowHeaders: []string{echo.HeaderOrigin},

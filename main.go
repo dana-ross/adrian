@@ -29,7 +29,7 @@ func main() {
 	}
 	log.Println("Defining paths")
 
-	e.GET("/css", func(c echo.Context) error {
+	e.GET("/css/", func(c echo.Context) error {
 		c.Response().Header().Set(echo.HeaderContentType, "text/css")
 		fontFilenames := strings.Split(c.QueryParam("family"), "|")
 		var fontsCSS string
