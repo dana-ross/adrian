@@ -33,7 +33,7 @@ func main() {
 		switch filepath.Ext(c.Param("filename")) {
 		case ".css":
 			c.Response().Header().Set(echo.HeaderContentType, "text/css")
-			fontFilenames := strings.Split(basename(c.Param("filename")), ",")
+			fontFilenames := strings.Split(basename(c.Param("filename")), "|")
 			var fontsCSS string
 			for _, fontFilename := range fontFilenames {
 				fmt.Println(fontFilename)
