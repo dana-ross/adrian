@@ -56,11 +56,11 @@ Supported font formats:
 
 ## Usage
 
-### http://example.com/font/Arial%20Bold.css
+### http://example.com/css/?family=Arial%20Bold
 
 Generates CSS for including the Arial Bold font file in a web project.
 
-Get one CSS file for muliple fonts by separating the names with pipe characters. For example: http://example.com/font/Arial|Courier%20New.css
+Get one CSS file for muliple fonts by separating the names with pipe characters. For example: http://example.com/css?family=Arial|Courier%20New
 
 ## Built With
 

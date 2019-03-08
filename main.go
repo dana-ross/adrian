@@ -29,21 +29,22 @@ func main() {
 	}
 	log.Println("Defining paths")
 
+	e.GET("/css", func(c echo.Context) error {
+		c.Response().Header().Set(echo.HeaderContentType, "text/css")
+		fontFilenames := strings.Split(c.QueryParam("family"), "|")
+		var fontsCSS string
+		for _, fontFilename := range fontFilenames {
+			fontData, err := adrianFonts.GetFont(fontFilename)
+			if err != nil {
+				return adrianServer.Return404(c)
+			}
+			fontsCSS = fontsCSS + "\n" + fontData.CSS
+		}
+		return c.String(http.StatusOK, fontsCSS)
+	})
+
 	e.GET("/font/:filename", func(c echo.Context) error {
 		switch filepath.Ext(c.Param("filename")) {
-		case ".css":
-			c.Response().Header().Set(echo.HeaderContentType, "text/css")
-			fontFilenames := strings.Split(basename(c.Param("filename")), "|")
-			var fontsCSS string
-			for _, fontFilename := range fontFilenames {
-				fmt.Println(fontFilename)
-				fontData, err := adrianFonts.GetFont(fontFilename)
-				if err != nil {
-					return adrianServer.Return404(c)
-				}
-				fontsCSS = fontsCSS + "\n" + fontData.CSS
-			}
-			return c.String(http.StatusOK, fontsCSS)
 		case ".ttf":
 			return outputFont(c, "font/ttf")
 		case ".woff":
