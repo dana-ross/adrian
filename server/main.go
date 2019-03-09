@@ -3,8 +3,8 @@ package server
 import (
 	"net/http"
 
-	adrianConfig "Adrian2.0/config"
-	adrianMiddleware "Adrian2.0/middleware"
+	adrianConfig "adrian/config"
+	adrianMiddleware "adrian/middleware"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 )

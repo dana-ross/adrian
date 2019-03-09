@@ -10,7 +10,7 @@ import (
 	"regexp"
 	"strings"
 
-	adrianConfig "Adrian2.0/config"
+	adrianConfig "adrian/config"
 	"github.com/ConradIrwin/font/sfnt"
 )
 
