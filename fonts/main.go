@@ -10,8 +10,8 @@ import (
 	"regexp"
 	"strings"
 
-	adrianConfig "adrian/config"
 	"github.com/ConradIrwin/font/sfnt"
+	adrianConfig "github.com/daveross/adrian/config"
 )
 
 // FontData describes a font file and the various metadata associated with it.

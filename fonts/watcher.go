@@ -7,7 +7,7 @@ import (
 	"path"
 	"time"
 
-	adrianConfig "adrian/config"
+	adrianConfig "github.com/daveross/adrian/config"
 	"github.com/fsnotify/fsnotify"
 )
 

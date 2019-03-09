@@ -8,9 +8,9 @@ import (
 	"path/filepath"
 	"strings"
 
-	adrianConfig "adrian/config"
-	adrianFonts "adrian/fonts"
-	adrianServer "adrian/server"
+	adrianConfig "github.com/daveross/adrian/config"
+	adrianFonts "github.com/daveross/adrian/fonts"
+	adrianServer "github.com/daveross/adrian/server"
 
 	"github.com/labstack/echo"
 )
