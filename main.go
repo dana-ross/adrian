@@ -39,7 +39,7 @@ func main() {
 				return adrianServer.Return404(c)
 			}
 			fontsCSS = fontsCSS + "\n" + fontData.CSS
-			}
+		}
 		return c.String(http.StatusOK, fontsCSS)
 	})
 
@@ -73,13 +73,19 @@ func basename(s string) string {
 }
 
 func outputFont(c echo.Context, mimeType string) error {
+
 	fontData, err := adrianFonts.GetFontByUniqueID(basename(c.Param("filename")))
 	if err != nil {
 		return adrianServer.Return404(c)
 	}
-	fontBinary, err := ioutil.ReadFile(fontData.Path) // just pass the file name
+	fontFileData, ok := fontData.Files[adrianFonts.GetCanonicalExtension(c.Param("filename"))]
+	if !ok {
+		log.Fatal("Invalid font format" + adrianFonts.GetCanonicalExtension(c.Param("filename")))
+	}
+
+	fontBinary, err := ioutil.ReadFile(fontFileData.Path) // just pass the file name
 	if err != nil {
-		log.Fatal("Can't read font file " + fontData.FileName)
+		log.Fatal("Can't read font file " + fontFileData.FileName)
 	}
 	return c.Blob(http.StatusOK, mimeType, fontBinary)
 

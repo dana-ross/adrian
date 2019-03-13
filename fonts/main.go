@@ -14,25 +14,43 @@ import (
 	adrianConfig "github.com/daveross/adrian/config"
 )
 
+// FontFileData describes a font (format) belonging to a font family
+type FontFileData struct {
+	Path      string
+	FileName  string
+	Extension string
+	CSSFormat string
+}
+
 // FontData describes a font file and the various metadata associated with it.
 type FontData struct {
-	Path      string
 	Name      string
 	Family    string
 	SubFamily string
-	Type      string
-	CSSFormat string
 	CSSWeight int
 	CSS       string
-	FileName  string
 	UniqueID  string
 	Metadata  map[sfnt.NameID]string
+	Files     map[string]FontFileData
 }
 
-var fonts []FontData
+var supportedFormats = map[string]bool{
+	"ttf":   true,
+	"otf":   true,
+	"woff":  true,
+	"woff2": true,
+}
+
+var fonts = make(map[string]FontData)
 
 // LoadFont loads a font into memory
-func LoadFont(filePath string, config adrianConfig.Config) FontData {
+func LoadFont(filePath string, config adrianConfig.Config) {
+
+	fontFormat := GetCanonicalExtension(filePath)
+	if _, ok := supportedFormats[fontFormat]; !ok {
+		return
+	}
+
 	file, err := os.Open(filePath)
 	if err != nil {
 		log.Fatal(err)
@@ -43,32 +61,37 @@ func LoadFont(filePath string, config adrianConfig.Config) FontData {
 		log.Fatal(parseError)
 	}
 
-	fontData := FontData{
-		Path:     filePath,
-		FileName: path.Base(filePath),
-		Type:     strings.ToLower(regexp.MustCompile("^\\.").ReplaceAllLiteralString(path.Ext(filePath), "")),
-		Metadata: make(map[sfnt.NameID]string),
-	}
-
 	nameTable, err := font.NameTable()
 	if err != nil {
 		log.Fatal(err)
 	}
 
+	metadata := make(map[sfnt.NameID]string)
 	for _, nameEntry := range nameTable.List() {
-		fontData.Metadata[nameEntry.NameID] = nameEntry.String()
+		metadata[nameEntry.NameID] = nameEntry.String()
 	}
-	fontData.Name = fontData.Metadata[sfnt.NameFull]
-	if fontData.Name == "" {
+
+	fontName := metadata[sfnt.NameFull]
+	if fontName == "" {
 		log.Fatalf("Font has no name! Using file name instead.")
 	}
 
-	fontData.Family = fontData.Metadata[sfnt.NamePreferredFamily]
-	if fontData.Family == "" {
-		if v, ok := fontData.Metadata[sfnt.NameFontFamily]; ok {
-			fontData.Family = v
+	fontFamily := metadata[sfnt.NamePreferredFamily]
+	if fontFamily == "" {
+		if v, ok := metadata[sfnt.NameFontFamily]; ok {
+			fontFamily = v
 		} else {
-			log.Fatalf("Font %v has no font family!", fontData.Name)
+			log.Fatalf("Font %v has no font family!", fontName)
+		}
+	}
+
+	fontData, ok := fonts[fontFamily]
+	if !ok {
+		fontData = FontData{
+			Name:     fontName,
+			Metadata: metadata,
+			Family:   fontFamily,
+			Files:    make(map[string]FontFileData),
 		}
 	}
 
@@ -77,12 +100,17 @@ func LoadFont(filePath string, config adrianConfig.Config) FontData {
 	fontData.UniqueID = calcUniqueID(fontData, config)
 
 	fontData.CSSWeight = guessFontCSSWeight(fontData)
-	fontData.CSSFormat = fontCSSFormat(fontData)
+
+	fontFileData := FontFileData{
+		CSSFormat: fontCSSFormat(fontFormat),
+		Extension: fontFormat,
+	}
+
+	fontData.Files[fontFormat] = fontFileData
 	fontData.CSS = fontFaceCSS(fontData)
 
-	log.Printf("Loaded font: %s", fontData.Name)
-	fonts = append(fonts, fontData)
-	return fontData
+	log.Printf("Loaded font: %s (%s)", fontData.Name, fontFormat)
+	fonts[fontFamily] = fontData
 }
 
 // GetFont returns the data for a single font by its name
@@ -120,11 +148,16 @@ func calcUniqueID(fontData FontData, config adrianConfig.Config) string {
 }
 
 // fontCSSFormat determines the appropriate CSS font format given a FontData struct with Type set
-func fontCSSFormat(fontData FontData) string {
-	switch fontData.Type {
+func fontCSSFormat(fileType string) string {
+	switch fileType {
 	case "ttf":
 		return "truetype"
 	default:
-		return fontData.Type
+		return fileType
 	}
+}
+
+// GetCanonicalExtension is
+func GetCanonicalExtension(filePath string) string {
+	return strings.ToLower(regexp.MustCompile("^\\.").ReplaceAllLiteralString(path.Ext(filePath), ""))
 }
