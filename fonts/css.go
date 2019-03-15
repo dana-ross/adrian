@@ -5,22 +5,24 @@ import "fmt"
 // fontFaceCSS generates the CSS for a font
 func fontFaceCSS(font FontData) string {
 	var css string
-
-	css = css + fmt.Sprintf(`@font-face {
-    font-family: '%s';
-    font-style: normal;
-    font-weight: %d;
-    %s
-}`, font.Name, font.CSSWeight, fontFaceSrc(font))
-
+	for variantName, variant := range font.Variants {
+		css = css + fmt.Sprintf(`@font-face {
+font-family: '%s';
+font-style: %s;
+font-weight: %d;
+%s
+}
+`, variantName, variant.CSSFontStyle, variant.CSSWeight, fontFaceSrc(variant.UniqueID, variantName, variant.Files))
+	}
 	return css
 }
 
-func fontFaceSrc(font FontData) string {
-	css := fmt.Sprintf("src: local('%s')", font.Family)
-	for _, fontFileData := range font.Files {
+func fontFaceSrc(uniqueID string, fontFamily string, fontFiles map[string]FontFileData) string {
+	css := fmt.Sprintf("src: local('%s')", fontFamily)
+	for _, fontFileData := range fontFiles {
 		css = css + fmt.Sprintf(`, url(/font/%s.%s) format('%s')`,
-			font.UniqueID, fontFileData.Extension, fontFileData.CSSFormat)
+			uniqueID, fontFileData.Extension, fontFileData.CSSFormat)
 	}
+
 	return css
 }

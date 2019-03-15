@@ -16,22 +16,28 @@ import (
 
 // FontFileData describes a font (format) belonging to a font family
 type FontFileData struct {
+	Name      string
 	Path      string
 	FileName  string
 	Extension string
 	CSSFormat string
 }
 
+type FontVariant struct {
+	Name         string
+	SubFamily    string
+	UniqueID     string
+	CSSFontStyle string
+	CSSWeight    int
+	Files        map[string]FontFileData
+}
+
 // FontData describes a font file and the various metadata associated with it.
 type FontData struct {
-	Name      string
-	Family    string
-	SubFamily string
-	CSSWeight int
-	CSS       string
-	UniqueID  string
-	Metadata  map[sfnt.NameID]string
-	Files     map[string]FontFileData
+	Family   string
+	CSS      string
+	Metadata map[sfnt.NameID]string
+	Variants map[string]FontVariant
 }
 
 var supportedFormats = map[string]bool{
@@ -42,6 +48,7 @@ var supportedFormats = map[string]bool{
 }
 
 var fonts = make(map[string]FontData)
+var uniqueIDXref = make(map[string]*FontVariant)
 
 // LoadFont loads a font into memory
 func LoadFont(filePath string, config adrianConfig.Config) {
@@ -88,36 +95,45 @@ func LoadFont(filePath string, config adrianConfig.Config) {
 	fontData, ok := fonts[fontFamily]
 	if !ok {
 		fontData = FontData{
-			Name:     fontName,
 			Metadata: metadata,
 			Family:   fontFamily,
-			Files:    make(map[string]FontFileData),
+			Variants: make(map[string]FontVariant),
 		}
 	}
 
-	fontData.SubFamily = fontData.Metadata[sfnt.NameFontSubfamily]
-
-	fontData.UniqueID = calcUniqueID(fontData, config)
-
-	fontData.CSSWeight = guessFontCSSWeight(fontData)
-
 	fontFileData := FontFileData{
+		Name:      fontName,
 		CSSFormat: fontCSSFormat(fontFormat),
 		Extension: fontFormat,
+		Path:      filePath,
 	}
 
-	fontData.Files[fontFormat] = fontFileData
-	fontData.CSS = fontFaceCSS(fontData)
+	fontVariant, ok := fontData.Variants[fontName]
+	if !ok {
+		fontVariant = FontVariant{
+			Name:      fontName,
+			SubFamily: fontData.Metadata[sfnt.NameFontSubfamily],
+			Files:     make(map[string]FontFileData),
+		}
+		fontVariant.CSSWeight = guessFontCSSWeight(fontVariant)
+		fontVariant.CSSFontStyle = guessFontCSSStyle(fontVariant)
 
-	log.Printf("Loaded font: %s (%s)", fontData.Name, fontFormat)
+		fontVariant.UniqueID = calcUniqueID(fontVariant, config)
+	}
+
+	fontVariant.Files[fontFormat] = fontFileData
+	fontData.Variants[fontName] = fontVariant
+	fontData.CSS = fontFaceCSS(fontData)
+	log.Printf("Loaded font: %s (%s)", fontName, fontFormat)
 	fonts[fontFamily] = fontData
+	uniqueIDXref[fontVariant.UniqueID] = &fontVariant
 }
 
 // GetFont returns the data for a single font by its name
 func GetFont(name string) (fontData FontData, err error) {
 	name = strings.ToLower(name)
 	for _, fontData := range fonts {
-		if strings.ToLower(fontData.Name) == name {
+		if strings.ToLower(fontData.Family) == name {
 			return fontData, nil
 		}
 	}
@@ -125,26 +141,25 @@ func GetFont(name string) (fontData FontData, err error) {
 	return FontData{}, errors.New("Font not found")
 }
 
-// GetFontByUniqueID returns the data for a single font by its unique ID
-func GetFontByUniqueID(uniqueID string) (fontData FontData, err error) {
-	for _, fontData := range fonts {
-		if fontData.UniqueID == uniqueID {
-			return fontData, nil
-		}
+// GetFontVariantByUniqueID returns the data for a single font by its unique ID
+func GetFontVariantByUniqueID(uniqueID string) (fontVariant *FontVariant, err error) {
+	fontVariant, ok := uniqueIDXref[uniqueID]
+	if ok {
+		return fontVariant, nil
 	}
 
-	return FontData{}, errors.New("Font not found")
+	return &FontVariant{}, errors.New("Font not found")
 }
 
 // calcUniqueID generates a unique ID for a font, optionally obfuscating it
-func calcUniqueID(fontData FontData, config adrianConfig.Config) string {
+func calcUniqueID(fontVariant FontVariant, config adrianConfig.Config) string {
 	if config.Global.ObfuscateFilenames {
 		hash := sha256.New()
-		hash.Write([]byte(fontData.Family + fontData.SubFamily))
+		hash.Write([]byte(fontVariant.Name))
 		return hex.EncodeToString(hash.Sum(nil))
 	}
 
-	return fontData.Family
+	return fontVariant.Name
 }
 
 // fontCSSFormat determines the appropriate CSS font format given a FontData struct with Type set
@@ -160,4 +175,15 @@ func fontCSSFormat(fileType string) string {
 // GetCanonicalExtension is
 func GetCanonicalExtension(filePath string) string {
 	return strings.ToLower(regexp.MustCompile("^\\.").ReplaceAllLiteralString(path.Ext(filePath), ""))
+}
+
+// guessFontCSSStyle is
+func guessFontCSSStyle(fontVariant FontVariant) string {
+	variantName := strings.ToLower(fontVariant.Name)
+	if match, _ := regexp.MatchString("italic$", variantName); match {
+		return "italic"
+	}
+
+	return "normal"
+
 }

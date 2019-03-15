@@ -1,6 +1,7 @@
 package fonts
 
 import (
+	"regexp"
 	"strings"
 )
 
@@ -23,16 +24,20 @@ var fontWeights = map[string]int{
 	"heavy":      900,
 }
 
-func guessFontCSSWeight(FontData FontData) int {
+func guessFontCSSWeight(fontVariant FontVariant) int {
+	variantName := strings.ToLower(fontVariant.Name)
+	var weightName string
 
-	fontVariant := strings.ToLower(FontData.SubFamily)
-
-	if _, ok := fontWeights[fontVariant]; ok {
-		return fontWeights[fontVariant]
+	if match, _ := regexp.MatchString("black$", variantName); match {
+		weightName = "black"
+	} else if match, _ := regexp.MatchString("italic$", variantName); match {
+		weightName = "normal"
+	} else {
+		weightName = variantName
 	}
 
-	if _, ok := fontWeights[strings.Replace(fontVariant, " italic", "", -1)]; ok {
-		return fontWeights[strings.Replace(fontVariant, " italic", "", -1)]
+	if _, ok := fontWeights[weightName]; ok {
+		return fontWeights[weightName]
 	}
 
 	return fontWeights["normal"]

@@ -43,20 +43,19 @@ func main() {
 		return c.String(http.StatusOK, fontsCSS)
 	})
 
-	e.GET("/font/:filename", func(c echo.Context) error {
+	e.GET("/font/:filename/", func(c echo.Context) error {
 		switch filepath.Ext(c.Param("filename")) {
 		case ".ttf":
-			return outputFont(c, "font/ttf")
+			return outputFont(c, "font/truetype")
 		case ".woff":
 			return outputFont(c, "font/woff")
 		case ".woff2":
 			return outputFont(c, "font/woff2")
 		case ".otf":
-			return outputFont(c, "font/otf")
+			return outputFont(c, "font/opentype")
 		}
 
 		return adrianServer.Return404(c)
-
 	})
 
 	log.Printf("Listening on port %d", config.Global.Port)
@@ -74,11 +73,12 @@ func basename(s string) string {
 
 func outputFont(c echo.Context, mimeType string) error {
 
-	fontData, err := adrianFonts.GetFontByUniqueID(basename(c.Param("filename")))
+	fontVariant, err := adrianFonts.GetFontVariantByUniqueID(basename(c.Param("filename")))
 	if err != nil {
 		return adrianServer.Return404(c)
 	}
-	fontFileData, ok := fontData.Files[adrianFonts.GetCanonicalExtension(c.Param("filename"))]
+
+	fontFileData, ok := fontVariant.Files[adrianFonts.GetCanonicalExtension(c.Param("filename"))]
 	if !ok {
 		log.Fatal("Invalid font format" + adrianFonts.GetCanonicalExtension(c.Param("filename")))
 	}
@@ -87,6 +87,8 @@ func outputFont(c echo.Context, mimeType string) error {
 	if err != nil {
 		log.Fatal("Can't read font file " + fontFileData.FileName)
 	}
+
+	c.Response().Header().Set("Content-Transfer-Encoding", "binary")
 	return c.Blob(http.StatusOK, mimeType, fontBinary)
 
 }
