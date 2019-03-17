@@ -23,6 +23,7 @@ type FontFileData struct {
 	CSSFormat string
 }
 
+// FontVariant describes a variant (ex: "Black", "Italic") of a font
 type FontVariant struct {
 	Name         string
 	SubFamily    string
@@ -40,6 +41,7 @@ type FontData struct {
 	Variants map[string]FontVariant
 }
 
+// supportedFormats contains the font formats Adrian currently supports
 var supportedFormats = map[string]bool{
 	"ttf":   true,
 	"otf":   true,
