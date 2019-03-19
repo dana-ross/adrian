@@ -1,4 +1,4 @@
-![Adrian](https://raw.githubusercontent.com/daveross/adrian/master/logo.svg)
+![Adrian](logo.svg)
 
 # Adrian: A platform for secure, performant web font hosting
 
