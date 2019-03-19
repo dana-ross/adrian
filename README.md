@@ -1,7 +1,7 @@
-![Adrian](logo.svg)
+<img align="left" src="logo.svg" alt="Adrian" width="200">
 
-# Adrian: A platform for secure, performant web font hosting
-
+# Adrian: A platform for secure, performant web font hosting</h1>
+<div style="clear:both;"></div>
 NOTE: Adrian is under active development & major architectural changes and is not ready for use.
 
 Adrian ([Frutiger](https://en.wikipedia.org/wiki/Adrian_Frutiger), not Pennino) is a server for hosting web fonts. It scans all the fonts in a directory and automatically generates CSS with @font-face declarations for individual fonts or families. Caching headers are added to all responses so browsers know not to request the same files repeatedly, while CORS and filename obfuscation helps comply with security restrictions in some fonts' licenses.
