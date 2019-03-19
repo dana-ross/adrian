@@ -1,3 +1,5 @@
+![Adrian](https://raw.githubusercontent.com/daveross/adrian/master/adrian.svg)
+
 # Adrian: A platform for secure, performant web font hosting
 
 NOTE: Adrian is under active development & major architectural changes and is not ready for use.
