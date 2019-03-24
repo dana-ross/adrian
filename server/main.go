@@ -14,12 +14,12 @@ import (
 func Instantiate(config adrianConfig.Config) *echo.Echo {
 
 	e := echo.New()
-	e.HideBanner = true
+	e.HideBanner = truegit
 	e.HidePort = true
 
 	e.Pre(middleware.AddTrailingSlash())
 
-	e.Use(adrianMiddleware.LockedDownCORSWithConfig(middleware.CORSConfig{
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: config.Global.AllowedOrigins,
 		AllowHeaders: []string{echo.HeaderOrigin},
 		AllowMethods: []string{http.MethodGet},
