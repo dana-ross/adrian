@@ -14,7 +14,7 @@ import (
 func Instantiate(config adrianConfig.Config) *echo.Echo {
 
 	e := echo.New()
-	e.HideBanner = truegit
+	e.HideBanner = true
 	e.HidePort = true
 
 	e.Pre(middleware.AddTrailingSlash())
