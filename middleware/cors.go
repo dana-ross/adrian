@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/labstack/echo"
@@ -32,6 +33,7 @@ func LockedDownCORSWithConfig(config coreMiddleware.CORSConfig) echo.MiddlewareF
 			}
 
 			if allowOrigin == "" {
+				fmt.Printf("Rejected request from origin %s", origin)
 				return c.NoContent(http.StatusForbidden)
 			}
 
