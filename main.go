@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"net/url"
 	"path/filepath"
 	"strings"
 
@@ -44,7 +45,7 @@ func main() {
 	})
 
 	e.GET("/font/:filename/", func(c echo.Context) error {
-		switch filepath.Ext(c.Param("filename")) {
+		switch filepath.Ext(url.QueryUnescape(c.Param("filename"))) {
 		case ".ttf":
 			return outputFont(c, "font/truetype")
 		case ".woff":
