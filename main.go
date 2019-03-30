@@ -39,7 +39,7 @@ func main() {
 			if err != nil {
 				return adrianServer.Return404(c)
 			}
-			fontsCSS = fontsCSS + "\n" + fontData.CSS
+			fontsCSS = fontsCSS + fontData.CSS
 		}
 		return c.String(http.StatusOK, fontsCSS)
 	})
