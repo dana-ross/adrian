@@ -18,7 +18,7 @@ font-weight: %d;
 }
 
 func fontFaceSrc(uniqueID string, fontFamily string, fontFiles map[string]FontFileData) string {
-	css := fmt.Sprintf("src: local('%s')", fontFamily)
+	css := fmt.Sprintf("src: local('IGNORE%s')", fontFamily)
 	for _, fontFileData := range fontFiles {
 		css = css + fmt.Sprintf(`, url(/font/%s.%s) format('%s')`,
 			uniqueID, fontFileData.Extension, fontFileData.CSSFormat)
