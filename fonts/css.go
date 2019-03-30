@@ -1,6 +1,9 @@
 package fonts
 
-import "fmt"
+import (
+	"fmt"
+	"net/url"
+)
 
 // fontFaceCSS generates the CSS for a font
 func fontFaceCSS(font FontData) string {
@@ -21,7 +24,7 @@ func fontFaceSrc(uniqueID string, fontFamily string, fontFiles map[string]FontFi
 	css := fmt.Sprintf("src: local('IGNORE%s')", fontFamily)
 	for _, fontFileData := range fontFiles {
 		css = css + fmt.Sprintf(`, url(/font/%s.%s) format('%s')`,
-			uniqueID, fontFileData.Extension, fontFileData.CSSFormat)
+			url.QueryEscape(uniqueID), url.QueryEscape(fontFileData.Extension), fontFileData.CSSFormat)
 	}
 
 	return css
