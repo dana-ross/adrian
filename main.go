@@ -45,7 +45,12 @@ func main() {
 	})
 
 	e.GET("/font/:filename/", func(c echo.Context) error {
-		switch filepath.Ext(url.QueryUnescape(c.Param("filename"))) {
+		filename, error := url.QueryUnescape(c.Param("filename"))
+		if error != nil {
+			return adrianServer.Return404(c)
+		}
+
+		switch filepath.Ext(filename) {
 		case ".ttf":
 			return outputFont(c, "font/truetype")
 		case ".woff":
