@@ -78,15 +78,18 @@ func basename(s string) string {
 }
 
 func outputFont(c echo.Context, mimeType string) error {
-
-	fontVariant, err := adrianFonts.GetFontVariantByUniqueID(basename(c.Param("filename")))
+	filename, error := url.QueryUnescape(c.Param("filename"))
+	if error != nil {
+		return adrianServer.Return404(c)
+	}
+	fontVariant, err := adrianFonts.GetFontVariantByUniqueID(basename(filename))
 	if err != nil {
 		return adrianServer.Return404(c)
 	}
 
-	fontFileData, ok := fontVariant.Files[adrianFonts.GetCanonicalExtension(c.Param("filename"))]
+	fontFileData, ok := fontVariant.Files[adrianFonts.GetCanonicalExtension(filename)]
 	if !ok {
-		log.Fatal("Invalid font format" + adrianFonts.GetCanonicalExtension(c.Param("filename")))
+		log.Fatal("Invalid font format" + adrianFonts.GetCanonicalExtension(filename))
 	}
 
 	fontBinary, err := ioutil.ReadFile(fontFileData.Path) // just pass the file name
@@ -95,6 +98,7 @@ func outputFont(c echo.Context, mimeType string) error {
 	}
 
 	c.Response().Header().Set("Content-Transfer-Encoding", "binary")
+	c.Response().Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s\"", filename))
 	return c.Blob(http.StatusOK, mimeType, fontBinary)
 
 }
