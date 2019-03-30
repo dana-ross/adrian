@@ -14,8 +14,7 @@ font-family: '%s';
 font-style: %s;
 font-weight: %d;
 %s
-}
-`, variantName, variant.CSSFontStyle, variant.CSSWeight, fontFaceSrc(variant.UniqueID, variantName, variant.Files))
+}`, variantName, variant.CSSFontStyle, variant.CSSWeight, fontFaceSrc(variant.UniqueID, variantName, variant.Files))
 	}
 	return css
 }
