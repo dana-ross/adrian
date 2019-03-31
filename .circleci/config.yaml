@@ -24,3 +24,14 @@ jobs:
       # specify any bash command here prefixed with `run: `
       - run: go get -v -t -d ./...
       - run: go build -v ./...
+workflows:
+  version: 2
+  untagged-build:
+    jobs:
+      - build
+  tagged-build:
+    jobs:
+      - build:
+        filters:
+            tags:
+              only: /^v.*/
