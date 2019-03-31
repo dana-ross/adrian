@@ -1,4 +1,4 @@
-<img align="left" src="logo.svg" alt="Adrian" height="50" />
+<img align="right" src="logo.svg" alt="Adrian" height="100" />
 
 # Adrian: A platform for secure, performant web font hosting</h1>
 
