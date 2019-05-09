@@ -44,6 +44,8 @@ workflows:
     jobs:
       - build:
           filters:
+            branches:
+              ignore: /.*/
             tags:
               only:
                 - /^v.*/
@@ -51,6 +53,8 @@ workflows:
           requires:
             - build
           filters:
+            branches:
+              ignore: /.*/          
             tags:
               only:
                 - /^v.*/
