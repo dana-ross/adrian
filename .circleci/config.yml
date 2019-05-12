@@ -24,6 +24,17 @@ jobs:
       # specify any bash command here prefixed with `run: `
       - run: go get -v -t -d ./...
       - run: go build -v ./...
+  publish-github-linux-release:
+    docker:
+      - image: cibuilds/github:0.10
+    steps:
+      - attach_workspace:
+          at: ./artifacts
+      - run:
+          name: "Publish Linux Release on GitHub"
+          command: |
+            VERSION=$(my-binary --version)
+            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} ./artifacts/
 workflows:
   version: 2
   untagged-build:
@@ -33,5 +44,17 @@ workflows:
     jobs:
       - build:
           filters:
+            branches:
+              ignore: /.*/
             tags:
-              only: /^v.*/
+              only:
+                - /^v.*/
+      - publish-github-linux-release:
+          requires:
+            - build
+          filters:
+            branches:
+              ignore: /.*/          
+            tags:
+              only:
+                - /^v.*/
