@@ -35,8 +35,8 @@ jobs:
       - run:
           name: "Publish Linux Release on GitHub"
           command: |
-            VERSION=$(adrian --version)
-            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} ./artifacts/
+            VERSION=$(/artifacts/adrian --version)
+            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} ./artifacts/adrian
 workflows:
   version: 2
   untagged-build:
