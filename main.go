@@ -1,11 +1,13 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"net/url"
+	"os"
 	"path/filepath"
 	"strings"
 
@@ -17,6 +19,15 @@ import (
 )
 
 func main() {
+
+	versionParam := flag.Bool("version", false, "display the version number and exit")
+	flag.Parse()
+
+	// Handle the --version parameter
+	if *versionParam {
+		fmt.Printf("%s\n", "2.0.0")
+		os.Exit(0)
+	}
 
 	log.Println("Starting Adrian 2.0")
 	log.Println("Loading adrian.yaml")
