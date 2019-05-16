@@ -44,13 +44,14 @@ func main() {
 	e.GET("/css/", func(c echo.Context) error {
 		c.Response().Header().Set(echo.HeaderContentType, "text/css")
 		fontFilenames := strings.Split(c.QueryParam("family"), "|")
+		display := c.QueryParam("display")
 		var fontsCSS string
 		for _, fontFilename := range fontFilenames {
 			fontData, err := adrianFonts.GetFont(fontFilename)
 			if err != nil {
 				return adrianServer.Return404(c)
 			}
-			fontsCSS = fontsCSS + fontData.CSS
+			fontsCSS = fontsCSS + adrianFonts.FontCSS(fontData, display)
 		}
 		return c.String(http.StatusOK, fontsCSS)
 	})

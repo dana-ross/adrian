@@ -4,6 +4,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"errors"
+	"fmt"
 	"log"
 	"os"
 	"path"
@@ -187,5 +188,17 @@ func guessFontCSSStyle(fontVariant FontVariant) string {
 	}
 
 	return "normal"
+
+}
+
+// FontCSS will return a font's CSS with optional font-display setting
+func FontCSS(fontData FontData, display string) string {
+	switch display {
+	case "auto", "block", "swap", "fallback", "optional":
+		displayCSS := fmt.Sprintf("font-display: %s", display)
+		return strings.ReplaceAll(fontData.CSS, "}", ";"+displayCSS+"}")
+	default:
+		return fontData.CSS
+	}
 
 }
