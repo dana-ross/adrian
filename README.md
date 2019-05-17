@@ -16,10 +16,14 @@ Adrian is written in [Go](https://golang.org/).
 
 ### Installing
 
-1. Clone the repository and `cd` into the directory
-1. `npm install`
+Binary releases are coming but you'll need to build Adrian until they're available:
+
+1. Make sure `go` has been installed
+1. `go get -d github.com/daveross/adrian`
+1. `go build -o adrian github.com/daveross/adrian`
 1. Edit `adrian.yaml` to configure
-1. `node app/src/server.js` to start the server
+1. `chmod 775 ./adrian`
+1. `./adrian` to start the server
 
 Test it by loading a font CSS file, such as http://example.com/font/Arial.css (replace `example.com` with your server's hostname and `Arial.css` with the name of a font available to Adrian.
 
