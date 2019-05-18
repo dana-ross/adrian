@@ -83,7 +83,7 @@ Font effects, similar to those used on Google Fonts, are supported. However, som
 | Shadow Multiple | `shadow-multiple` |
 | 3D              | `3d`              |
 | 3D Float        | `3d-float`        |
-
+                                
 ## Built With
 
 * [Go](https://golang.org/)
