@@ -70,6 +70,20 @@ Get one CSS file for muliple fonts by separating the names with pipe characters.
 
 The `display` query parameter allows you to set the `font-display` style for all of the requestsed fonts.
 
+Font effects, similar to those used on Google Fonts, are supported. However, some Google Fonts effects require images which aren't supported by Adrian yet. To use a font effect, include the `effect` parameter in your URL and set it to one of the supported values:
+
+| Name            | `effect=`         |
+|-----------------|-------------------|
+| Anaglyph        | `anaglyph`        |
+| Emboss          | `emboss`          |
+| Fire            | `fire`            |
+| Fire Animation  | `fire-animation`  |
+| Neon            | `neon`            |
+| Outline         | `outline`         |
+| Shadow Multiple | `shadow-multiple` |
+| 3D              | `3d`              |
+| 3D Float        | `3d-float`        |
+
 ## Built With
 
 * [Go](https://golang.org/)
