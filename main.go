@@ -45,6 +45,7 @@ func main() {
 		c.Response().Header().Set(echo.HeaderContentType, "text/css")
 		fontFilenames := strings.Split(c.QueryParam("family"), "|")
 		display := c.QueryParam("display")
+		effects := strings.Split(c.QueryParam("effect"), "|")
 		var fontsCSS string
 		for _, fontFilename := range fontFilenames {
 			fontData, err := adrianFonts.GetFont(fontFilename)
@@ -53,6 +54,13 @@ func main() {
 			}
 			fontsCSS = fontsCSS + adrianFonts.FontCSS(fontData, display)
 		}
+
+		for _, effect := range effects {
+			if adrianFonts.Effects[effect] != "" {
+				fontsCSS = fontsCSS + adrianFonts.Effects[effect]
+			}
+		}
+
 		return c.String(http.StatusOK, fontsCSS)
 	})
 
