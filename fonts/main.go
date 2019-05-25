@@ -196,7 +196,7 @@ func FontCSS(fontData FontData, display string) string {
 	switch display {
 	case "auto", "block", "swap", "fallback", "optional":
 		displayCSS := fmt.Sprintf("font-display: %s", display)
-		return strings.ReplaceAll(fontData.CSS, "}", ";"+displayCSS+"}")
+		return strings.Replace(fontData.CSS, "}", ";"+displayCSS+"}", -1)
 	default:
 		return fontData.CSS
 	}
