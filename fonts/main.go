@@ -36,7 +36,6 @@ type FontVariant struct {
 // FontData describes a font file and the various metadata associated with it.
 type FontData struct {
 	Family   string
-	CSS      string
 	Metadata map[sfnt.NameID]string
 	Variants map[string]FontVariant
 }
@@ -125,7 +124,6 @@ func LoadFont(filePath string, config adrianConfig.Config) {
 
 	fontVariant.Files[fontFormat] = fontFileData
 	fontData.Variants[fontName] = fontVariant
-	// fontData.CSS = fontFaceCSS(fontData)
 	log.Printf("Loaded font: %s (%s)", fontName, fontFormat)
 	fonts[fontFamily] = fontData
 	uniqueIDXref[fontVariant.UniqueID] = &fontVariant
