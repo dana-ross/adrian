@@ -9,6 +9,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 
 	adrianConfig "github.com/daveross/adrian/config"
@@ -43,15 +44,27 @@ func main() {
 
 	e.GET("/css/", func(c echo.Context) error {
 		c.Response().Header().Set(echo.HeaderContentType, "text/css")
-		fontFilenames := strings.Split(c.QueryParam("family"), "|")
+		fontRequests := strings.Split(c.QueryParam("family"), "|")
 		display := c.QueryParam("display")
 		var fontsCSS string
-		for _, fontFilename := range fontFilenames {
-			fontData, err := adrianFonts.GetFont(fontFilename)
+		for _, fontRequest := range fontRequests {
+			fontRequestData := strings.SplitN(fontRequest, ":", 2)
+			fontFamilyName := fontRequestData[0]
+			var fontWeights []int
+			if len(fontRequestData) > 1 {
+				for _, weight := range strings.Split(fontRequestData[1], ",") {
+					numericWeight, err := strconv.Atoi(weight)
+					if err == nil {
+						fontWeights = append(fontWeights, numericWeight)
+					}
+				}
+				fontWeights = uniqueInts(fontWeights)
+			}
+			fontData, err := adrianFonts.GetFont(fontFamilyName)
 			if err != nil {
 				return adrianServer.Return404(c)
 			}
-			fontsCSS = fontsCSS + adrianFonts.FontCSS(fontData, display)
+			fontsCSS = fontsCSS + adrianFonts.FontFaceCSS(fontData, fontWeights, display)
 		}
 		return c.String(http.StatusOK, fontsCSS)
 	})
@@ -113,4 +126,17 @@ func outputFont(c echo.Context, mimeType string) error {
 	c.Response().Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s\"", filename))
 	return c.Blob(http.StatusOK, mimeType, fontBinary)
 
+}
+
+// uniqueInts returns a unique subset of the int slice provided.
+func uniqueInts(input []int) []int {
+	u := make([]int, 0, len(input))
+	m := make(map[int]bool)
+	for _, val := range input {
+		if _, ok := m[val]; !ok {
+			m[val] = true
+			u = append(u, val)
+		}
+	}
+	return u
 }

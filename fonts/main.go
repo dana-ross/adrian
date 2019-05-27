@@ -4,7 +4,6 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"errors"
-	"fmt"
 	"log"
 	"os"
 	"path"
@@ -126,7 +125,7 @@ func LoadFont(filePath string, config adrianConfig.Config) {
 
 	fontVariant.Files[fontFormat] = fontFileData
 	fontData.Variants[fontName] = fontVariant
-	fontData.CSS = fontFaceCSS(fontData)
+	// fontData.CSS = fontFaceCSS(fontData)
 	log.Printf("Loaded font: %s (%s)", fontName, fontFormat)
 	fonts[fontFamily] = fontData
 	uniqueIDXref[fontVariant.UniqueID] = &fontVariant
@@ -188,17 +187,5 @@ func guessFontCSSStyle(fontVariant FontVariant) string {
 	}
 
 	return "normal"
-
-}
-
-// FontCSS will return a font's CSS with optional font-display setting
-func FontCSS(fontData FontData, display string) string {
-	switch display {
-	case "auto", "block", "swap", "fallback", "optional":
-		displayCSS := fmt.Sprintf("font-display: %s", display)
-		return strings.Replace(fontData.CSS, "}", ";"+displayCSS+"}", -1)
-	default:
-		return fontData.CSS
-	}
 
 }
