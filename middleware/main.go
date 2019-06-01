@@ -1,6 +1,8 @@
 package middleware
 
-import "github.com/labstack/echo"
+import (
+	"github.com/labstack/echo"
+)
 
 // SetServerHeader sets a Server header
 func SetServerHeader(next echo.HandlerFunc) echo.HandlerFunc {

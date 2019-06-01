@@ -14,7 +14,6 @@ import (
 
 	adrianConfig "github.com/daveross/adrian/config"
 	adrianFonts "github.com/daveross/adrian/fonts"
-	adrianServer "github.com/daveross/adrian/server"
 
 	"github.com/labstack/echo"
 )
@@ -34,7 +33,7 @@ func main() {
 	log.Println("Loading adrian.yaml")
 	config := adrianConfig.LoadConfig("./adrian.yaml")
 	log.Println("Initializing web server")
-	e := adrianServer.Instantiate(config)
+	e := Instantiate(config)
 	log.Println("Loading fonts and starting watchers")
 	for _, folder := range config.Global.Directories {
 		adrianFonts.FindFonts(folder, config)
@@ -62,17 +61,18 @@ func main() {
 			}
 			fontData, err := adrianFonts.GetFont(fontFamilyName)
 			if err != nil {
-				return adrianServer.Return404(c)
+				return return404(c)
 			}
 			fontsCSS = fontsCSS + adrianFonts.FontFaceCSS(fontData, fontWeights, display)
 		}
+		writeToCache(c, fontsCSS)
 		return c.String(http.StatusOK, fontsCSS)
 	})
 
 	e.GET("/font/:filename/", func(c echo.Context) error {
 		filename, error := url.QueryUnescape(c.Param("filename"))
 		if error != nil {
-			return adrianServer.Return404(c)
+			return return404(c)
 		}
 
 		switch filepath.Ext(filename) {
@@ -86,7 +86,7 @@ func main() {
 			return outputFont(c, "font/opentype")
 		}
 
-		return adrianServer.Return404(c)
+		return return404(c)
 	})
 
 	log.Printf("Listening on port %d", config.Global.Port)
@@ -105,11 +105,11 @@ func basename(s string) string {
 func outputFont(c echo.Context, mimeType string) error {
 	filename, error := url.QueryUnescape(c.Param("filename"))
 	if error != nil {
-		return adrianServer.Return404(c)
+		return return404(c)
 	}
 	fontVariant, err := adrianFonts.GetFontVariantByUniqueID(basename(filename))
 	if err != nil {
-		return adrianServer.Return404(c)
+		return return404(c)
 	}
 
 	fontFileData, ok := fontVariant.Files[adrianFonts.GetCanonicalExtension(filename)]
