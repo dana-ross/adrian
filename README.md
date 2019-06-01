@@ -25,6 +25,8 @@ Binary releases are coming but you'll need to build Adrian until they're availab
 1. `chmod 775 ./adrian`
 1. `./adrian` to start the server
 
+To use a YAML config file in a different location, specify it with the `--config` parameter when starting Adrian. For example: `./adrian --config /etc/adrian/adrian.yaml`
+
 Test it by loading a font CSS file, such as http://example.com/font/Arial.css (replace `example.com` with your server's hostname and `Arial.css` with the name of a font available to Adrian.
 
 ### docker-compose
