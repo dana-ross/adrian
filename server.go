@@ -1,4 +1,4 @@
-package server
+package main
 
 import (
 	"net/http"
@@ -30,12 +30,14 @@ func Instantiate(config adrianConfig.Config) *echo.Echo {
 
 	e.Use(adrianMiddleware.SetServerHeader)
 
+	e.Use(readFromCache)
+
 	return e
 
 }
 
-// Return404 sends an appropriate message back to the browser on a 404
-func Return404(c echo.Context) error {
+// return404 sends an appropriate message back to the browser on a 404
+func return404(c echo.Context) error {
 	status := make(map[string]string)
 	status["message"] = "Not Found"
 	return c.JSON(http.StatusNotFound, status)

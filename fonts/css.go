@@ -3,16 +3,23 @@ package fonts
 import (
 	"fmt"
 	"net/url"
-	"strings"
 )
 
-// fontFaceCSS generates the CSS for a font
-func fontFaceCSS(font FontData) string {
-	var css string
+// FontFaceCSS generates the CSS for a font
+func FontFaceCSS(font FontData, fontWeights []int, display string) string {
+	var css = ""
 	for variantName, variant := range font.Variants {
-		css = css + fmt.Sprintf(`@font-face{font-family: '%s';font-style: %s;font-weight: %d;%s}`, variantName, variant.CSSFontStyle, variant.CSSWeight, fontFaceSrc(variant.UniqueID, variantName, variant.Files))
+		if len(fontWeights) > 0 {
+			for _, requestedWeight := range fontWeights {
+				if requestedWeight == variant.CSSWeight {
+					css = css + fmt.Sprintf(`@font-face{font-family: '%s';font-style: %s;font-weight: %d;%s%s}`, variantName, variant.CSSFontStyle, variant.CSSWeight, fontDisplayCSS(display), fontFaceSrc(variant.UniqueID, variantName, variant.Files))
+				}
+			}
+		} else {
+			css = css + fmt.Sprintf(`@font-face{font-family: '%s';font-style: %s;font-weight: %d;%s%s}`, variantName, variant.CSSFontStyle, variant.CSSWeight, fontDisplayCSS(display), fontFaceSrc(variant.UniqueID, variantName, variant.Files))
+		}
 	}
-	return strings.Replace(css, "\n", "", -1)
+	return css
 }
 
 func fontFaceSrc(uniqueID string, fontFamily string, fontFiles map[string]FontFileData) string {
@@ -23,4 +30,13 @@ func fontFaceSrc(uniqueID string, fontFamily string, fontFiles map[string]FontFi
 	}
 
 	return css
+}
+
+func fontDisplayCSS(display string) string {
+	switch display {
+	case "auto", "block", "swap", "fallback", "optional":
+		return fmt.Sprintf("font-display: %s;", display)
+	default:
+		return ""
+	}
 }

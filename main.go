@@ -9,11 +9,11 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 
 	adrianConfig "github.com/daveross/adrian/config"
 	adrianFonts "github.com/daveross/adrian/fonts"
-	adrianServer "github.com/daveross/adrian/server"
 
 	"github.com/labstack/echo"
 )
@@ -33,7 +33,7 @@ func main() {
 	log.Println("Loading adrian.yaml")
 	config := adrianConfig.LoadConfig("./adrian.yaml")
 	log.Println("Initializing web server")
-	e := adrianServer.Instantiate(config)
+	e := Instantiate(config)
 	log.Println("Loading fonts and starting watchers")
 	for _, folder := range config.Global.Directories {
 		adrianFonts.FindFonts(folder, config)
@@ -43,23 +43,36 @@ func main() {
 
 	e.GET("/css/", func(c echo.Context) error {
 		c.Response().Header().Set(echo.HeaderContentType, "text/css")
-		fontFilenames := strings.Split(c.QueryParam("family"), "|")
+		fontRequests := strings.Split(c.QueryParam("family"), "|")
 		display := c.QueryParam("display")
 		var fontsCSS string
-		for _, fontFilename := range fontFilenames {
-			fontData, err := adrianFonts.GetFont(fontFilename)
-			if err != nil {
-				return adrianServer.Return404(c)
+		for _, fontRequest := range fontRequests {
+			fontRequestData := strings.SplitN(fontRequest, ":", 2)
+			fontFamilyName := fontRequestData[0]
+			var fontWeights []int
+			if len(fontRequestData) > 1 {
+				for _, weight := range strings.Split(fontRequestData[1], ",") {
+					numericWeight, err := strconv.Atoi(weight)
+					if err == nil {
+						fontWeights = append(fontWeights, numericWeight)
+					}
+				}
+				fontWeights = uniqueInts(fontWeights)
 			}
-			fontsCSS = fontsCSS + adrianFonts.FontCSS(fontData, display)
+			fontData, err := adrianFonts.GetFont(fontFamilyName)
+			if err != nil {
+				return return404(c)
+			}
+			fontsCSS = fontsCSS + adrianFonts.FontFaceCSS(fontData, fontWeights, display)
 		}
+		writeToCache(c, fontsCSS)
 		return c.String(http.StatusOK, fontsCSS)
 	})
 
 	e.GET("/font/:filename/", func(c echo.Context) error {
 		filename, error := url.QueryUnescape(c.Param("filename"))
 		if error != nil {
-			return adrianServer.Return404(c)
+			return return404(c)
 		}
 
 		switch filepath.Ext(filename) {
@@ -73,7 +86,7 @@ func main() {
 			return outputFont(c, "font/opentype")
 		}
 
-		return adrianServer.Return404(c)
+		return return404(c)
 	})
 
 	log.Printf("Listening on port %d", config.Global.Port)
@@ -92,11 +105,11 @@ func basename(s string) string {
 func outputFont(c echo.Context, mimeType string) error {
 	filename, error := url.QueryUnescape(c.Param("filename"))
 	if error != nil {
-		return adrianServer.Return404(c)
+		return return404(c)
 	}
 	fontVariant, err := adrianFonts.GetFontVariantByUniqueID(basename(filename))
 	if err != nil {
-		return adrianServer.Return404(c)
+		return return404(c)
 	}
 
 	fontFileData, ok := fontVariant.Files[adrianFonts.GetCanonicalExtension(filename)]
@@ -113,4 +126,17 @@ func outputFont(c echo.Context, mimeType string) error {
 	c.Response().Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s\"", filename))
 	return c.Blob(http.StatusOK, mimeType, fontBinary)
 
+}
+
+// uniqueInts returns a unique subset of the int slice provided.
+func uniqueInts(input []int) []int {
+	u := make([]int, 0, len(input))
+	m := make(map[int]bool)
+	for _, val := range input {
+		if _, ok := m[val]; !ok {
+			m[val] = true
+			u = append(u, val)
+		}
+	}
+	return u
 }
