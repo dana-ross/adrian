@@ -21,6 +21,7 @@ import (
 func main() {
 
 	versionParam := flag.Bool("version", false, "display the version number and exit")
+	configParam := flag.String("config", "", "specify a config file")
 	flag.Parse()
 
 	// Handle the --version parameter
@@ -31,7 +32,12 @@ func main() {
 
 	log.Println("Starting Adrian 2.0")
 	log.Println("Loading adrian.yaml")
-	config := adrianConfig.LoadConfig("./adrian.yaml")
+	var config adrianConfig.Config
+	if *configParam != "" {
+		config = adrianConfig.LoadConfig(*configParam)
+	} else {
+		config = adrianConfig.LoadConfig("./adrian.yaml")
+	}
 	log.Println("Initializing web server")
 	e := Instantiate(config)
 	log.Println("Loading fonts and starting watchers")
