@@ -70,7 +70,7 @@ Generates CSS for including the Arial Bold font file in a web project.
 
 Get one CSS file for muliple fonts by separating the names with pipe characters. For example: http://example.com/css?family=Arial|Courier%20New
 
-The `display` query parameter allows you to set the `font-display` style for all of the requestsed fonts.
+The `display` query parameter allows you to set the `font-display` style for all of the requested fonts.
 
 ## Built With
 
