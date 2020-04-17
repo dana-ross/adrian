@@ -26,7 +26,7 @@ func main() {
 
 	// Handle the --version parameter
 	if *versionParam {
-		fmt.Printf("%s\n", "2.0.0")
+		fmt.Printf("%s\n", "2.1.0")
 		os.Exit(0)
 	}
 
