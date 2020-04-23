@@ -26,11 +26,11 @@ func main() {
 
 	// Handle the --version parameter
 	if *versionParam {
-		fmt.Printf("%s\n", "2.1.0")
+		fmt.Printf("%s\n", "2.1.1")
 		os.Exit(0)
 	}
 
-	log.Println("Starting Adrian 2.0")
+	log.Println("Starting Adrian 2.1.1")
 	log.Println("Loading adrian.yaml")
 	var config adrianConfig.Config
 	if *configParam != "" {
