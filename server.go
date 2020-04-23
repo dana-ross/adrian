@@ -29,6 +29,7 @@ func Instantiate(config adrianConfig.Config) *echo.Echo {
 	}))
 
 	e.Use(adrianMiddleware.SetServerHeader)
+	e.Use(adrianMiddleware.SetCacheControlHeaders(config))
 
 	e.Use(readFromCache)
 

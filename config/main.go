@@ -11,12 +11,13 @@ import (
 // Config represents the YAML config file
 type Config struct {
 	Global struct {
-		Debug              bool
-		Port               uint16
-		Domains            []string
-		AllowedOrigins     []string
-		Directories        []string
-		ObfuscateFilenames bool `yaml:"obfuscate filenames,omitempty"`
+		Debug                bool
+		Port                 uint16
+		Domains              []string
+		AllowedOrigins       []string
+		Directories          []string
+		ObfuscateFilenames   bool `yaml:"obfuscate filenames,omitempty"`
+		CacheControlLifetime uint32 `yaml:"cache-control lifetime"`
 	}
 }
 
