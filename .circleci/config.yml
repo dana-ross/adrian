@@ -20,8 +20,7 @@ jobs:
     working_directory: /go/src/github.com/daveross/adrian
     steps:
       - checkout
-      - run: curl -sL https://git.io/goreleaser | bash
-
+ 
       # specify any bash command here prefixed with `run: `
       - run: go get -v -t -d ./...
       - run: go build -o ./adrian -v github.com/daveross/adrian
