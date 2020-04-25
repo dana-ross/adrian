@@ -3,10 +3,10 @@
 # Check https://circleci.com/docs/2.0/language-go/ for more details
 version: 2
 jobs:
-  build:
+  test:
     docker:
       # specify the version
-      - image: circleci/golang:1.10
+      - image: circleci/golang:1.14
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -20,40 +20,35 @@ jobs:
     working_directory: /go/src/github.com/daveross/adrian
     steps:
       - checkout
+      - run: curl -sL https://git.io/goreleaser | bash
 
       # specify any bash command here prefixed with `run: `
       - run: go get -v -t -d ./...
       - run: go build -o ./adrian -v github.com/daveross/adrian
-    persist_to_workspace:
-      - ./adrian
-  publish-github-linux-release:
+  release:
     docker:
-      - image: cibuilds/github:0.10
+      - image: circleci/golang:1.14
     steps:
-      - attach_workspace:
-          at: ./artifacts
-      - run:
-          name: "Publish Linux Release on GitHub"
-          command: |
-            VERSION=$(/artifacts/adrian --version)
-            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} -draft ./artifacts/adrian/
+      - checkout
+      - run: curl -sL https://git.io/goreleaser | bash
+
 workflows:
   version: 2
   untagged-build:
     jobs:
-      - build
+      - test
   tagged-build:
     jobs:
-      - build:
+      - test:
           filters:
             branches:
               ignore: /.*/
             tags:
               only:
                 - /^v.*/
-      - publish-github-linux-release:
+      - release:
           requires:
-            - build
+            - test
           filters:
             branches:
               ignore: /.*/          
