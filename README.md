@@ -6,7 +6,14 @@
 
 Meet my friend Adrian! 
 
-Adrian is a web server, like Apache or Nginx, but just for fonts. Really, just fonts. Just point Adrian toward a directory of font files; it will generate CSS to use all styles and weights you have, and serve everything up for your visitors. If you’ve used Google Fonts, you should find Adrian quite familiar. 
+Adrian is a web server, like Apache or Nginx, but just for fonts. Really, just fonts. Just point Adrian toward a directory of font files; it will generate CSS to use all styles and weights you have, and serve everything up for your visitors. If you’ve used Google Fonts, you should find Adrian quite familiar.
+
+Adrian supports these font formats:
+
+* otf
+* ttf
+* woff
+* woff2
 
 Do you have a project that you’ve open-sourced but you want to use commercial fonts in it? Put your code in a public repo and have Adrian deal with the fonts. 
 
@@ -14,42 +21,18 @@ Did you actually read the license for that font you bought, and your head is spi
 
 ## Getting Started
 
-### Prerequisites
-
-Adrian is written in [Go](https://golang.org/).
-
 ### Installing
 
-Binary releases are coming but you'll need to build Adrian until they're available:
-
-1. Make sure `go` has been installed
-1. `go get -d github.com/daveross/adrian`
-1. `go build -o adrian github.com/daveross/adrian`
-1. Edit `adrian.yaml` to configure
-1. `chmod 775 ./adrian`
-1. `./adrian` to start the server
+1. Grab the most recent [Adrian release](https://github.com/daveross/adrian/releases) for your operating system. Extract the files somewhere on your server or local development environment.
+1. Copy `adrian.yaml.example` to a new file named `adrian.yaml`
+1. Edit `adrian.yaml` to configure Adrian
+1. Run `adrian` to begin serving
 
 To use a YAML config file in a different location, specify it with the `--config` parameter when starting Adrian. For example: `./adrian --config /etc/adrian/adrian.yaml`
 
 Test it by loading a font CSS file, such as http://example.com/font/Arial.css (replace `example.com` with your server's hostname and `Arial.css` with the name of a font available to Adrian.
 
-### docker-compose
-
-When running Adrian through `docker-compose`, don't forget to mount a `fonts` directory containing the fonts you want served, and your own configuration file. For example:
-
-```yaml
-version: '3'
-services:
-  adrian:
-    build: 'https://github.com/daveross/adrian.git'
-    volumes:
-      - './fonts:/usr/share/fonts'
-      - './adrian.yaml:/usr/src/app/adrian.yaml'
-    ports:
-      - '3000:3000'
-```
-
-#### Configuring
+#### Adrian.yaml settings
 
 ##### domains
 
@@ -57,14 +40,7 @@ A whitelist of domains allowed to use fonts hosted by this instance
 
 ##### directories
 
-A list of directories where Adrian should look for font files. On Linux, system-wide fonts are stored in `/usr/share/fonts`.
-
-Supported font formats:
-
-* otf
-* ttf
-* woff
-* woff2
+A list of directories where Adrian should look for font files. On Linux, system-wide fonts are usually found in `/usr/share/fonts`.
 
 ## Usage
 
