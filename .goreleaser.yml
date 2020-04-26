@@ -14,6 +14,7 @@ archives:
     files:
       - README.md
       - adrian.yaml.example
+    wrap_in_directory: "adrian"
 checksum:
   name_template: 'checksums.txt'
 snapshot:
