@@ -4,9 +4,13 @@
 
 [![CodeFactor](https://www.codefactor.io/repository/github/daveross/adrian/badge)](https://www.codefactor.io/repository/github/daveross/adrian)
 
-Adrian ([Frutiger](https://en.wikipedia.org/wiki/Adrian_Frutiger), not Pennino) is a server for hosting web fonts. It scans all the fonts in a directory and automatically generates CSS with @font-face declarations for individual fonts or families. Caching headers are added to all responses so browsers know not to request the same files repeatedly, while CORS and filename obfuscation helps comply with security restrictions in some fonts' licenses.
+Meet my friend Adrian! 
 
-Basically, it lets you serve fonts for your sites from a central location so they're not sitting in your project's repo, which is important if you have commercial fonts on an otherwise open source site. It also uses browser same-origin security and filename obfuscation to help prevent you from being a one-stop distribution site for the fonts you paid good money for.
+Adrian is a web server, like Apache or Nginx, but just for fonts. Really, just fonts. Just point Adrian toward a directory of font files; it will generate CSS to use all styles and weights you have, and serve everything up for your visitors. If you’ve used Google Fonts, you should find Adrian quite familiar. 
+
+Do you have a project that you’ve open-sourced but you want to use commercial fonts in it? Put your code in a public repo and have Adrian deal with the fonts. 
+
+Did you actually read the license for that font you bought, and your head is spinning after reading things like “adequate technical protection measures that restrict the Use of and/or access to the Licensed Web Fonts, for instance by utilizing JavaScript or access control mechanisms for cross-origin resource sharing”? Yeah, Adrian knows about all that. 
 
 ## Getting Started
 
