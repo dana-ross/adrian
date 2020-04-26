@@ -25,6 +25,7 @@ jobs:
       - run: go get -v -t -d ./...
       - run: go build -o ./adrian -v github.com/daveross/adrian
   release:
+    working_directory: /go/src/github.com/daveross/adrian
     docker:
       - image: circleci/golang:1.14
     steps:
