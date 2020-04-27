@@ -1,12 +1,16 @@
 global:
+
   # Port number Adrian responds to
-  port:
+  port: 80
+  
   # Adrian will only allow fonts to be used on these URLs (CORS functionality)
   domains:
     - example.com
+    
   # Directories where Adrian should look for fonts
   directories:
-    - 
+    - /usr/share/fonts
+    
   # If true, replace font filenames with hashes so they can't be guessed as easily
   obfuscate filenames: false
 
