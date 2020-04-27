@@ -62,7 +62,9 @@ Generates CSS for including the Arial font and all of its variants in a web proj
 
 Get one CSS file for muliple fonts by separating the names with pipe characters. For example: http://example.com/css?family=Arial|Courier%20New
 
-The `display` query parameter allows you to set the `font-display` style for all of the requested fonts.
+#### http://example.com/css/?family=Arial&display=swap
+
+The `display` query parameter allows you to set the [`font-display`](https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display) style for all of the requested fonts. For example, the `display=swap` value tells browsers to render text with fallback fonts until custom ones are downloaded.
 
 ## Built With
 
