@@ -56,9 +56,9 @@ Used to set the cache-control header sent to browsers. This header instructs bro
 
 ## Usage
 
-### http://example.com/css/?family=Arial%20Bold
+### http://example.com/css/?family=Arial
 
-Generates CSS for including the Arial Bold font file in a web project.
+Generates CSS for including the Arial font and all of its variants in a web project.
 
 Get one CSS file for muliple fonts by separating the names with pipe characters. For example: http://example.com/css?family=Arial|Courier%20New
 
