@@ -6,7 +6,7 @@
 
 Meet my friend Adrian! 
 
-Adrian is a web server, like Apache or Nginx, but just for fonts. Really, just fonts. Point Adrian toward a directory of font files; it will generate CSS to use all styles and weights you have, and serve everything up for your visitors. If you’ve used Google Fonts, you should find Adrian quite familiar.
+Adrian is a web server, like Apache or Nginx, but just for fonts. Really, just fonts. Point Adrian toward a directory of font files; it'll generate CSS to use all styles and weights you have, and serve everything up for your visitors. If you’ve used Google Fonts, you should find Adrian quite familiar.
 
 Adrian supports these font formats:
 
