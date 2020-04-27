@@ -1,6 +1,6 @@
 <img align="right" src="logo.svg" alt="Adrian" height="100" />
 
-# Adrian: A platform for secure, performant web font hosting</h1>
+# Adrian: A platform for hosting web fonts</h1>
 
 [![CodeFactor](https://www.codefactor.io/repository/github/daveross/adrian/badge)](https://www.codefactor.io/repository/github/daveross/adrian)
 
