@@ -30,7 +30,7 @@ Did you actually read the license for that font you bought, and your head is spi
 
 To use a YAML config file in a different location, specify it with the `--config` parameter when starting Adrian. For example: `./adrian --config /etc/adrian/adrian.yaml`
 
-Test it by loading a font CSS file, such as http://example.com/font/Arial.css (replace `example.com` with your server's hostname and `Arial.css` with the name of a font available to Adrian.
+Test it by loading a font CSS file, such as http://example.com/font/Arial.css (replace `example.com` with your server's hostname and `Arial` with the name of a font available to Adrian.
 
 #### Adrian.yaml settings
 
