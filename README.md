@@ -34,6 +34,10 @@ Test it by loading a font CSS file, such as http://example.com/font/Arial.css (r
 
 #### Adrian.yaml settings
 
+##### port: &lt;integer&gt;
+
+The TCP/IP port Adrian will listen to. Defaults to port 80.
+
 ##### domains
 
 A whitelist of domains allowed to use fonts hosted by this instance
@@ -41,6 +45,14 @@ A whitelist of domains allowed to use fonts hosted by this instance
 ##### directories
 
 A list of directories where Adrian should look for font files. On Linux, system-wide fonts are usually found in `/usr/share/fonts`.
+
+##### obfuscate filenames: &lt;boolean&gt;
+
+If true, the filenames of font files are replaced with hashes so they can't be guessed as easily.
+
+##### cache-control lifetime: &lt;seconds&gt;
+
+Used to set the cache-control header sent to browsers. This header instructs browsers to cache Adrian's CSS and font files for this amount of time.
 
 ## Usage
 
