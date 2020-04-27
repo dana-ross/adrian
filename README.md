@@ -15,7 +15,7 @@ Adrian supports these font formats:
 * woff
 * woff2
 
-Do you have a project that you’ve open-sourced but you want to use commercial fonts in it? Put your code in a public repo and load your fonts off your Adrian server. 
+Do you have a project that you’ve open-sourced but you can't put the commercial fonts you bought in your repo? Put your code up on GitHub and load your fonts off your private Adrian server. 
 
 Did you actually read the license for that font you bought, and your head is spinning after reading things like “adequate technical protection measures that restrict the Use of and/or access to the Licensed Web Fonts, for instance by utilizing JavaScript or access control mechanisms for cross-origin resource sharing”? Yeah, Adrian's got your back. 
 
