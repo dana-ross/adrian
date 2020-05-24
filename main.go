@@ -123,10 +123,15 @@ func outputFont(c echo.Context, mimeType string) error {
 		log.Fatal("Invalid font format" + adrianFonts.GetCanonicalExtension(filename))
 	}
 
-	if(len(c.Request().Header["If-None-Match"])> 0 && c.Request().Header["If-None-Match"][0] == fontFileData.MD5) {
-		status := make(map[string]string)
-		status["message"] = "Not Modified"
-		return c.JSON(http.StatusNotModified, status)
+	for i := range c.Request().Header["If-None-Match"] {
+		individualHashes := strings.Split(c.Request().Header["If-None-Match"][i], (", "))
+		for j := range individualHashes {
+			if individualHashes[j] == fontFileData.MD5 {
+				status := make(map[string]string)
+				status["message"] = "Not Modified"
+				return c.JSON(http.StatusNotModified, status)	
+			}
+		}
 	}
 
 	fontBinary, err := ioutil.ReadFile(fontFileData.Path) // just pass the file name
