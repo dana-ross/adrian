@@ -130,6 +130,7 @@ func outputFont(c echo.Context, mimeType string) error {
 
 	c.Response().Header().Set("Content-Transfer-Encoding", "binary")
 	c.Response().Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s\"", filename))
+	c.Response().Header().Set("ETag", fontFileData.MD5)
 	return c.Blob(http.StatusOK, mimeType, fontBinary)
 
 }
