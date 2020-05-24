@@ -2,10 +2,12 @@ package fonts
 
 import (
 	"crypto/sha256"
+	"crypto/md5"
 	"encoding/hex"
 	"errors"
 	"log"
 	"os"
+	"io"
 	"path"
 	"regexp"
 	"strings"
@@ -21,6 +23,7 @@ type FontFileData struct {
 	FileName  string
 	Extension string
 	CSSFormat string
+	MD5       string
 }
 
 // FontVariant describes a variant (ex: "Black", "Italic") of a font
@@ -101,12 +104,13 @@ func LoadFont(filePath string, config adrianConfig.Config) {
 			Variants: make(map[string]FontVariant),
 		}
 	}
-
+	
 	fontFileData := FontFileData{
 		Name:      fontName,
 		CSSFormat: fontCSSFormat(fontFormat),
 		Extension: fontFormat,
 		Path:      filePath,
+		MD5:       calcFileMD5(filePath),
 	}
 
 	fontVariant, ok := fontData.Variants[fontName]
@@ -160,6 +164,22 @@ func calcUniqueID(fontVariant FontVariant, config adrianConfig.Config) string {
 	}
 
 	return fontVariant.Name
+}
+
+// calcFileMD5 calculates the MD5 hash of a file
+func calcFileMD5(filepath string) string {
+	file, err := os.Open(filepath)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+
+	hash := md5.New()
+	if _, err := io.Copy(hash, file); err != nil {
+		log.Fatal(err)
+	}
+
+	return hex.EncodeToString(hash.Sum(nil))
 }
 
 // fontCSSFormat determines the appropriate CSS font format given a FontData struct with Type set
