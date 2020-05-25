@@ -18,6 +18,10 @@ type Config struct {
 		Directories          []string
 		ObfuscateFilenames   bool `yaml:"obfuscate filenames,omitempty"`
 		CacheControlLifetime uint32 `yaml:"cache-control lifetime"`
+		Logs				 struct {
+			Access			 string
+			Error			 string	
+		}
 	}
 }
 
