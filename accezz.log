@@ -1,0 +1,4 @@
+127.0.0.1 - dave [25/May/2020:14:25:52 -0400] "GET /font/Clickbait/ HTTP/1.1" 404 -
+127.0.0.1 - dave [25/May/2020:14:26:00 -0400] "GET /font/Open+Sans+Bold/ HTTP/1.1" 404 -
+127.0.0.1 - dave [25/May/2020:14:26:04 -0400] "GET /font/OpenSans+Bold/ HTTP/1.1" 404 -
+127.0.0.1 - dave [25/May/2020:14:26:55 -0400] "GET /css/ HTTP/1.1" 200 2310
