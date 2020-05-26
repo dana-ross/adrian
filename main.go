@@ -196,7 +196,7 @@ func formatAccessLogMessage(c echo.Context, responseStatus int, responseLength i
 	timeNow := time.Now()
 
 	logMessage := fmt.Sprintf(
-		"%s - %s [%s] \"%s %s %s\" %d %s",
+		"%s - %s [%s] \"%s %s %s\" %d %s \"%s\"",
 		c.RealIP(),
 		currentUser.Username,
 		timeNow.Format("02/Jan/2006:15:04:05 -0700"),
@@ -205,6 +205,7 @@ func formatAccessLogMessage(c echo.Context, responseStatus int, responseLength i
 		c.Request().Proto,
 		responseStatus,
 		loggedResponseLength,
+		c.Request().UserAgent(),
 	)
 
 	return logMessage
