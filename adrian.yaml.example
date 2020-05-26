@@ -19,4 +19,4 @@ global:
 
   # Paths for writing logs to disk
   logs:
-    access: "access.log"
+    access: "/var/log/adrian/access.log"
