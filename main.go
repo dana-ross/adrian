@@ -8,9 +8,11 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"os/user"
 	"path/filepath"
 	"strconv"
 	"strings"
+	"time"
 
 	adrianConfig "github.com/daveross/adrian/config"
 	adrianFonts "github.com/daveross/adrian/fonts"
@@ -45,6 +47,9 @@ func main() {
 		adrianFonts.FindFonts(folder, config)
 		adrianFonts.InstantiateWatcher(folder, config)
 	}
+
+	accessLog := openAccessLog(config.Global.Logs.Access)
+
 	log.Println("Defining paths")
 
 	e.GET("/css/", func(c echo.Context) error {
@@ -67,31 +72,35 @@ func main() {
 			}
 			fontData, err := adrianFonts.GetFont(fontFamilyName)
 			if err != nil {
+				accessLog.WriteString(formatAccessLogMessage(c, 404, 0) + "\n")
 				return return404(c)
 			}
 			fontsCSS = fontsCSS + adrianFonts.FontFaceCSS(fontData, fontWeights, display)
 		}
 		writeToCache(c, fontsCSS)
+		accessLog.WriteString(formatAccessLogMessage(c, 200, len(fontsCSS)) + "\n")
 		return c.String(http.StatusOK, fontsCSS)
 	})
 
 	e.GET("/font/:filename/", func(c echo.Context) error {
 		filename, error := url.QueryUnescape(c.Param("filename"))
 		if error != nil {
+			accessLog.WriteString(formatAccessLogMessage(c, 404, 0) + "\n")
 			return return404(c)
 		}
 
 		switch filepath.Ext(filename) {
 		case ".ttf":
-			return outputFont(c, "font/truetype")
+			return outputFont(c, "font/truetype", accessLog)
 		case ".woff":
-			return outputFont(c, "font/woff")
+			return outputFont(c, "font/woff", accessLog)
 		case ".woff2":
-			return outputFont(c, "font/woff2")
+			return outputFont(c, "font/woff2", accessLog)
 		case ".otf":
-			return outputFont(c, "font/opentype")
+			return outputFont(c, "font/opentype", accessLog)
 		}
-
+		
+		accessLog.WriteString(formatAccessLogMessage(c, 404, 0) + "\n")
 		return return404(c)
 	})
 
@@ -108,13 +117,15 @@ func basename(s string) string {
 	return s
 }
 
-func outputFont(c echo.Context, mimeType string) error {
+func outputFont(c echo.Context, mimeType string, accessLog *os.File) error {
 	filename, error := url.QueryUnescape(c.Param("filename"))
 	if error != nil {
+		accessLog.WriteString(formatAccessLogMessage(c, 404, 0) + "\n")
 		return return404(c)
 	}
 	fontVariant, err := adrianFonts.GetFontVariantByUniqueID(basename(filename))
 	if err != nil {
+		accessLog.WriteString(formatAccessLogMessage(c, 404, 0) + "\n")
 		return return404(c)
 	}
 
@@ -129,6 +140,7 @@ func outputFont(c echo.Context, mimeType string) error {
 			if individualHashes[j] == fontFileData.MD5 {
 				status := make(map[string]string)
 				status["message"] = "Not Modified"
+				accessLog.WriteString(formatAccessLogMessage(c, 304, 0) + "\n")
 				return c.JSON(http.StatusNotModified, status)	
 			}
 		}
@@ -142,6 +154,7 @@ func outputFont(c echo.Context, mimeType string) error {
 	c.Response().Header().Set("Content-Transfer-Encoding", "binary")
 	c.Response().Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s\"", filename))
 	c.Response().Header().Set("ETag", fontFileData.MD5)
+	accessLog.WriteString(formatAccessLogMessage(c, 200, len(fontBinary)) + "\n")
 	return c.Blob(http.StatusOK, mimeType, fontBinary)
 
 }
@@ -157,4 +170,43 @@ func uniqueInts(input []int) []int {
 		}
 	}
 	return u
+}
+
+func openAccessLog(path string) *os.File {
+	f, err := os.OpenFile(path, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+    if err != nil {
+        log.Fatal(fmt.Sprintf("Can't open access log file: %s", err))
+	}
+	
+	return f
+}
+
+// formatAccessLogMessage formats access log messages in Common Log Format
+func formatAccessLogMessage(c echo.Context, responseStatus int, responseLength int) string {
+	currentUser, err := user.Current()
+	if err != nil {
+		log.Fatal("Can't retrieve current user")
+	}
+
+	loggedResponseLength := strconv.Itoa(responseLength)
+	if(responseLength == 0) {
+		loggedResponseLength = "-" 
+	}
+	
+	timeNow := time.Now()
+
+	logMessage := fmt.Sprintf(
+		"%s - %s [%s] \"%s %s %s\" %d %s \"%s\"",
+		c.RealIP(),
+		currentUser.Username,
+		timeNow.Format("02/Jan/2006:15:04:05 -0700"),
+		c.Request().Method,
+		c.Request().URL.Path,
+		c.Request().Proto,
+		responseStatus,
+		loggedResponseLength,
+		c.Request().UserAgent(),
+	)
+
+	return logMessage
 }

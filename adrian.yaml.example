@@ -16,3 +16,7 @@ global:
 
   # Used to set the cache-control header in responses
   cache-control lifetime: 2628000
+
+  # Paths for writing logs to disk
+  logs:
+    access: "/var/log/adrian/access.log"

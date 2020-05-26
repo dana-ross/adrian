@@ -32,7 +32,32 @@ To use a YAML config file in a different location, specify it with the `--config
 
 Test it by loading a font CSS file, such as http://example.com/font/Arial.css (replace `example.com` with your server's hostname and `Arial` with the name of a font available to Adrian.
 
-#### Adrian.yaml settings
+#### Configuring Adrian with `adrian.yaml`
+
+```yaml
+global:
+
+  # Port number Adrian responds to
+  port: 80
+  
+  # Adrian will only allow fonts to be used on these URLs (CORS functionality)
+  domains:
+    - example.com
+    
+  # Directories where Adrian should look for fonts
+  directories:
+    - /usr/share/fonts
+    
+  # If true, replace font filenames with hashes so they can't be guessed as easily
+  obfuscate filenames: false
+
+  # Used to set the cache-control header in responses
+  cache-control lifetime: 2628000
+
+  # Paths for writing logs to disk
+  logs:
+    access: "/var/log/adrian/access.log"
+```
 
 ##### port: &lt;integer&gt;
 
@@ -53,6 +78,11 @@ If true, the filenames of font files are replaced with hashes so they can't be g
 ##### cache-control lifetime: &lt;seconds&gt;
 
 Used to set the cache-control header sent to browsers. This header instructs browsers to cache Adrian's CSS and font files for this amount of time.
+
+##### logs
+
+###### access
+Path where Adrian should write an access log. Access logs use Common Log Format for easy parsing.
 
 ## Usage
 
