@@ -56,7 +56,16 @@ Used to set the cache-control header sent to browsers. This header instructs bro
 
 ## Usage
 
-### http://example.com/css/?family=Arial
+### CSS Import
+
+In your site's CSS, import Adrian's CSS for the fonts you want to use:
+```
+@import "https://example.com/css?family=Arian|Times+New+Roman;
+```
+
+### URL formats
+
+#### http://example.com/css/?family=Arial
 
 Generates CSS for including the Arial font and all of its variants in a web project.
 
