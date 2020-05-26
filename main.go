@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"net/http/httputil"
 	"net/url"
 	"os"
 	"os/user"
@@ -195,14 +196,17 @@ func formatAccessLogMessage(c echo.Context, responseStatus int, responseLength i
 	
 	timeNow := time.Now()
 
+	dump, err := httputil.DumpRequest(c.Request(), false)
+	requestStatusLine := strings.Split(string(dump), "\n")[0]
+	requestStatusLine = strings.Replace(requestStatusLine, "\r", "", -1)
+
+
 	logMessage := fmt.Sprintf(
-		"%s - %s [%s] \"%s %s %s\" %d %s \"%s\"",
+		"%s - %s [%s] \"%s\" %d %s \"%s\"",
 		c.RealIP(),
 		currentUser.Username,
 		timeNow.Format("02/Jan/2006:15:04:05 -0700"),
-		c.Request().Method,
-		c.Request().URL.Path,
-		c.Request().Proto,
+		requestStatusLine,
 		responseStatus,
 		loggedResponseLength,
 		c.Request().UserAgent(),
