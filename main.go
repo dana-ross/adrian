@@ -52,6 +52,15 @@ func main() {
 
 	log.Println("Defining paths")
 
+
+	registerCSSPath(e, accessLog)
+	registerFontPath(e, accessLog)
+
+	log.Printf("Listening on port %d", config.Global.Port)
+	e.Logger.Fatal(e.Start(fmt.Sprintf(":%d", config.Global.Port)))
+}
+
+func registerCSSPath(e *echo.Echo, accessLog *os.File) error {
 	e.GET("/css/", func(c echo.Context) error {
 		c.Response().Header().Set(echo.HeaderContentType, "text/css")
 		fontRequests := strings.Split(c.QueryParam("family"), "|")
@@ -88,6 +97,10 @@ func main() {
 		return c.String(http.StatusOK, fontsCSS)
 	})
 
+	return nil
+}
+
+func registerFontPath(e *echo.Echo, accessLog *os.File) error {
 	e.GET("/font/:filename/", func(c echo.Context) error {
 		filename, error := url.QueryUnescape(c.Param("filename"))
 		if error != nil {
@@ -116,11 +129,8 @@ func main() {
 
 		return return404(c)
 	})
-
-	log.Printf("Listening on port %d", config.Global.Port)
-	e.Logger.Fatal(e.Start(fmt.Sprintf(":%d", config.Global.Port)))
+	return nil
 }
-
 // Basename gets the base filename (minus the last extension)
 func basename(s string) string {
 	n := strings.LastIndexByte(s, '.')
