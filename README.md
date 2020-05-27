@@ -109,6 +109,7 @@ The `display` query parameter allows you to set the [`font-display`](https://dev
 
 * [Go](https://golang.org/)
 * [Echo](https://echo.labstack.com/) - The web framework used
+* [Fastcache](https://github.com/VictoriaMetrics/fastcache) - In-memory caching library
 * [sfnt](https://github.com/ConradIrwin/font/tree/master/sfnt) - Font file parsing
 
 ## Contributing
