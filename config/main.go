@@ -28,7 +28,9 @@ type Config struct {
 // LoadConfig loads and processes a configuration file
 func LoadConfig(filename string) Config {
 
-	yamlString, fileErr := ioutil.ReadFile(filename)
+	// gosec flags the following line as Potential file inclusion via variable 
+	// but the filename passed in is used to read to a variable & parsed as YAML
+	yamlString, fileErr := ioutil.ReadFile(filename) // #nosec
 	if fileErr != nil {
 		log.Fatal(fileErr)
 	}
