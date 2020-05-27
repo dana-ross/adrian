@@ -81,7 +81,7 @@ Used to set the cache-control header sent to browsers. This header instructs bro
 
 ##### logs
 
-###### access
+###### access: &lt;string&gt;
 Path where Adrian should write an access log. Access logs use Common Log Format for easy parsing.
 
 ## Usage
