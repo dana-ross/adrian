@@ -26,8 +26,8 @@ jobs:
       - run: go build -o ./adrian -v github.com/daveross/adrian
       - run: go get github.com/securego/gosec/cmd/gosec
       - run: /go/bin/gosec /go/src/github.com/daveross/adrian
-      - run: /go/bin/gosec /go/src/github.com/daveross/config
-      - run: /go/bin/gosec /go/src/github.com/daveross/middleware
+      - run: /go/bin/gosec /go/src/github.com/daveross/adrian/config
+      - run: /go/bin/gosec /go/src/github.com/daveross/adrian/middleware
   release:
     working_directory: /go/src/github.com/daveross/adrian
     docker:
