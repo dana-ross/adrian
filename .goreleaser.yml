@@ -15,6 +15,13 @@ archives:
       - README.md
       - adrian.yaml.example
     wrap_in_directory: "adrian"
+goos:
+  - linux
+  - darwin
+  - windows
+goarch:
+  - amd64
+  - 386
 checksum:
   name_template: 'checksums.txt'
 snapshot:
