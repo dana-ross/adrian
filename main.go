@@ -82,13 +82,19 @@ func registerCSSPath(e *echo.Echo, accessLog *os.File) error {
 			}
 			fontData, err := adrianFonts.GetFont(fontFamilyName)
 			if err != nil {
-				accessLog.WriteString(formatAccessLogMessage(c, 404, 0) + "\n")
+				_, err := accessLog.WriteString(formatAccessLogMessage(c, 404, 0) + "\n")
+				if err != nil {
+					log.Fatal(fmt.Sprintf("Error writing to access log: %s", err))
+				}
 				return return404(c)
 			}
 			fontsCSS = fontsCSS + adrianFonts.FontFaceCSS(fontData, fontWeights, display)
 		}
 		writeToCache(c, fontsCSS)
-		accessLog.WriteString(formatAccessLogMessage(c, 200, len(fontsCSS)) + "\n")
+		_, err := accessLog.WriteString(formatAccessLogMessage(c, 200, len(fontsCSS)) + "\n")
+		if err != nil {
+			log.Fatal(fmt.Sprintf("Error writing to access log: %s", err))
+		}
 		return c.String(http.StatusOK, fontsCSS)
 	})
 
@@ -99,7 +105,10 @@ func registerFontPath(e *echo.Echo, accessLog *os.File) error {
 	e.GET("/font/:filename/", func(c echo.Context) error {
 		filename, error := url.QueryUnescape(c.Param("filename"))
 		if error != nil {
-			accessLog.WriteString(formatAccessLogMessage(c, 404, 0) + "\n")
+			_, err := accessLog.WriteString(formatAccessLogMessage(c, 404, 0) + "\n")
+			if err != nil {
+				log.Fatal(fmt.Sprintf("Error writing to access log: %s", err))
+			}
 			return return404(c)
 		}
 
@@ -114,7 +123,11 @@ func registerFontPath(e *echo.Echo, accessLog *os.File) error {
 			return outputFont(c, "font/opentype", accessLog)
 		}
 		
-		accessLog.WriteString(formatAccessLogMessage(c, 404, 0) + "\n")
+		_, err := accessLog.WriteString(formatAccessLogMessage(c, 404, 0) + "\n")
+		if err != nil {
+			log.Fatal(fmt.Sprintf("Error writing to access log: %s", err))
+		}
+
 		return return404(c)
 	})
 	return nil
@@ -131,12 +144,19 @@ func basename(s string) string {
 func outputFont(c echo.Context, mimeType string, accessLog *os.File) error {
 	filename, error := url.QueryUnescape(c.Param("filename"))
 	if error != nil {
-		accessLog.WriteString(formatAccessLogMessage(c, 404, 0) + "\n")
+		_, err := accessLog.WriteString(formatAccessLogMessage(c, 404, 0) + "\n")
+		if err != nil {
+			log.Fatal(fmt.Sprintf("Error writing to access log: %s", err))
+		}
+
 		return return404(c)
 	}
 	fontVariant, err := adrianFonts.GetFontVariantByUniqueID(basename(filename))
 	if err != nil {
-		accessLog.WriteString(formatAccessLogMessage(c, 404, 0) + "\n")
+		_, err := accessLog.WriteString(formatAccessLogMessage(c, 404, 0) + "\n")
+		if err != nil {
+			log.Fatal(fmt.Sprintf("Error writing to access log: %s", err))
+		}
 		return return404(c)
 	}
 
@@ -151,7 +171,12 @@ func outputFont(c echo.Context, mimeType string, accessLog *os.File) error {
 			if individualHashes[j] == fontFileData.MD5 {
 				status := make(map[string]string)
 				status["message"] = "Not Modified"
-				accessLog.WriteString(formatAccessLogMessage(c, 304, 0) + "\n")
+				
+				_, err := accessLog.WriteString(formatAccessLogMessage(c, 304, 0) + "\n")
+				if err != nil {
+					log.Fatal(fmt.Sprintf("Error writing to access log: %s", err))
+				}
+
 				return c.JSON(http.StatusNotModified, status)	
 			}
 		}
@@ -165,7 +190,12 @@ func outputFont(c echo.Context, mimeType string, accessLog *os.File) error {
 	c.Response().Header().Set("Content-Transfer-Encoding", "binary")
 	c.Response().Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s\"", filename))
 	c.Response().Header().Set("ETag", fontFileData.MD5)
-	accessLog.WriteString(formatAccessLogMessage(c, 200, len(fontBinary)) + "\n")
+
+	_, err = accessLog.WriteString(formatAccessLogMessage(c, 200, len(fontBinary)) + "\n")
+	if err != nil {
+		log.Fatal(fmt.Sprintf("Error writing to access log: %s", err))
+	}
+	
 	return c.Blob(http.StatusOK, mimeType, fontBinary)
 
 }
@@ -184,7 +214,7 @@ func uniqueInts(input []int) []int {
 }
 
 func openAccessLog(path string) *os.File {
-	f, err := os.OpenFile(path, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	f, err := os.OpenFile(path, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644) // #nosec
     if err != nil {
         log.Fatal(fmt.Sprintf("Can't open access log file: %s", err))
 	}

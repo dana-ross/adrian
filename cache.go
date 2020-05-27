@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+	"log"
 	"github.com/VictoriaMetrics/fastcache"
 	"github.com/labstack/echo"
 )
@@ -12,7 +14,10 @@ func readFromCache(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		if cache.Has([]byte(c.QueryParams().Encode())) {
 			c.Response().Header().Set(echo.HeaderContentType, "text/css")
-			c.Response().Write(cache.Get(nil, []byte(c.QueryParams().Encode())))
+			_, err := c.Response().Write(cache.Get(nil, []byte(c.QueryParams().Encode())))
+			if err != nil {
+				log.Fatal(fmt.Sprintf("Error writing cached value to Response: %s", err))
+			}
 			return nil
 		}
 		return next(c)
