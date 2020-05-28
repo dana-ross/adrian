@@ -43,3 +43,10 @@ func return404(c echo.Context) error {
 	status["message"] = "Not Found"
 	return c.JSON(http.StatusNotFound, status)
 }
+
+// return500 sends an appropriate message back to the browser on a 404
+func return500(c echo.Context) error {
+	status := make(map[string]string)
+	status["message"] = "Internal Server Error"
+	return c.JSON(http.StatusInternalServerError, status)
+}
