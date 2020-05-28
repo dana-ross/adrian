@@ -139,7 +139,8 @@ func outputFont(c echo.Context, mimeType string, accessLog *os.File, errorLog *o
 
 	fontFileData, ok := fontVariant.Files[adrianFonts.GetCanonicalExtension(filename)]
 	if !ok {
-		log.Fatal("Invalid font format" + adrianFonts.GetCanonicalExtension(filename))
+		writeErrorLog(errorLog, c, "Invalid font format" + adrianFonts.GetCanonicalExtension(filename))
+		return return500(c)
 	}
 
 	for i := range c.Request().Header["If-None-Match"] {
@@ -157,7 +158,8 @@ func outputFont(c echo.Context, mimeType string, accessLog *os.File, errorLog *o
 
 	fontBinary, err := ioutil.ReadFile(fontFileData.Path) // just pass the file name
 	if err != nil {
-		log.Fatal("Can't read font file " + fontFileData.FileName)
+		writeErrorLog(errorLog, c, "Can't read font file " + fontFileData.FileName)
+		return500(c)
 	}
 
 	c.Response().Header().Set("Content-Transfer-Encoding", "binary")
@@ -166,7 +168,8 @@ func outputFont(c echo.Context, mimeType string, accessLog *os.File, errorLog *o
 
 	_, err = accessLog.WriteString(formatAccessLogMessage(c, 200, len(fontBinary)) + "\n")
 	if err != nil {
-		log.Fatal(fmt.Sprintf("Error writing to access log: %s", err))
+		writeErrorLog(errorLog, c, fmt.Sprintf("Error writing to access log: %s", err))
+		return return500(c)
 	}
 	
 	return c.Blob(http.StatusOK, mimeType, fontBinary)
