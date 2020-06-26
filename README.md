@@ -2,7 +2,7 @@
 
 # Adrian: A platform for hosting web fonts</h1>
 
-[![CodeFactor](https://www.codefactor.io/repository/github/daveross/adrian/badge)](https://www.codefactor.io/repository/github/daveross/adrian)
+[![CodeFactor](https://www.codefactor.io/repository/github/daveross/adrian/badge)](https://www.codefactor.io/repository/github/daveross/adrian) ![GitHub](https://img.shields.io/github/license/daveross/adrian)
 
 Meet my friend Adrian! 
 
