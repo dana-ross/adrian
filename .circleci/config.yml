@@ -2,6 +2,8 @@
 #
 # Check https://circleci.com/docs/2.0/language-go/ for more details
 version: 2
+orbs:
+  golangci-lint: timakin/golangci-lint@0.1.1
 jobs:
   test:
     docker:
@@ -42,6 +44,7 @@ workflows:
   untagged-build:
     jobs:
       - test
+      - golangci-lint/lint
   tagged-build:
     jobs:
       - test:
