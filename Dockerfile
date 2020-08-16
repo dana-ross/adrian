@@ -1,15 +1,21 @@
-FROM alpine:latest
+FROM golang
 
 EXPOSE 80/tcp 443/tcp
 
-RUN wget https://github.com/daveross/adrian/releases/download/v`wget -q -O - https://api.github.com/repos/daveross/adrian/releases/latest | grep tag_name | tr -s ' ' | cut -d ' ' -f3 | sed s/[^0-9\.]//g`/adrian_`wget -q -O - https://api.github.com/repos/daveross/adrian/releases/latest | grep tag_name | tr -s ' ' | cut -d ' ' -f3 | sed s/[^0-9\.]//g`_`uname -s`_`uname -m`.tar.gz
+RUN mkdir -p /go/src/github.com/daveross/adrian
 
-RUN tar xvfz adrian*.tar.gz
+ADD . /go/src/github.com/daveross/adrian
 
-RUN rm *.tar.gz
+RUN cd /go/src/github.com/daveross/adrian && go get -v ./... && go build .
+
+FROM alpine:latest
+
+COPY --from=0 /go/src/github.com/daveross/adrian/adrian .
+
+RUN apk add libc6-compat
 
 RUN mkdir -p /fonts
 
 ADD adrian.yaml.docker.example /etc/adrian.yaml
 
-CMD adrian/adrian --config /etc/adrian.yaml
+CMD ./adrian --config /etc/adrian.yaml
