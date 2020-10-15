@@ -122,7 +122,7 @@ We use [SemVer](http://semver.org/) for versioning. For the versions available, 
 
 ## Authors
 
-* **Dave Ross** - *Initial work* - [daveross](https://github.com/daveross)
+* **Dana Ross** - *Initial work* - [dana-ross](https://github.com/dana-ross)
 
 ## License
 
