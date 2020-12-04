@@ -77,7 +77,7 @@ If true, the filenames of font files are replaced with hashes so they can't be g
 
 ##### cache-control lifetime: &lt;seconds&gt;
 
-Used to set the cache-control header sent to browsers. This header instructs browsers to cache Adrian's CSS and font files for this amount of time.
+Used to set the cache-control header sent to browsers and CDNs. This header instructs everyone downstream to cache Adrian's CSS and font files for this amount of time.
 
 ##### logs
 
