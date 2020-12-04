@@ -25,6 +25,8 @@ jobs:
       - run: go get -v -t -d ./...
       - run: go build -o ./adrian -v github.com/daveross/adrian
       - run: go get github.com/securego/gosec/cmd/gosec
+      - run: go get -u golang.org/x/lint/golint
+      - run: /go/bin/golint /go/sec/github.com/dana-ross/adrian
       - run: /go/bin/gosec /go/src/github.com/daveross/adrian
       - run: /go/bin/gosec /go/src/github.com/daveross/adrian/config
       - run: /go/bin/gosec /go/src/github.com/daveross/adrian/middleware
