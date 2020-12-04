@@ -17,21 +17,21 @@ jobs:
     #### expecting it in the form of
     ####   /go/src/github.com/circleci/go-tool
     ####   /go/src/bitbucket.org/circleci/go-tool
-    working_directory: /go/src/github.com/daveross/adrian
+    working_directory: /go/src/github.com/dana-ross/adrian
     steps:
       - checkout
  
       # specify any bash command here prefixed with `run: `
       - run: go get -v -t -d ./...
-      - run: go build -o ./adrian -v github.com/daveross/adrian
+      - run: go build -o ./adrian -v github.com/dana-ross/adrian
       - run: go get github.com/securego/gosec/cmd/gosec
       - run: go get -u golang.org/x/lint/golint
       - run: /go/bin/golint /go/sec/github.com/dana-ross/adrian
-      - run: /go/bin/gosec /go/src/github.com/daveross/adrian
-      - run: /go/bin/gosec /go/src/github.com/daveross/adrian/config
-      - run: /go/bin/gosec /go/src/github.com/daveross/adrian/middleware
+      - run: /go/bin/gosec /go/src/github.com/dana-ross/adrian
+      - run: /go/bin/gosec /go/src/github.com/dana-ross/adrian/config
+      - run: /go/bin/gosec /go/src/github.com/dana-ross/adrian/middleware
   release:
-    working_directory: /go/src/github.com/daveross/adrian
+    working_directory: /go/src/github.com/dana-ross/adrian
     docker:
       - image: circleci/golang:1.14
     steps:
