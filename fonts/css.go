@@ -23,9 +23,12 @@ func FontFaceCSS(font FontData, fontWeights []int, display string) string {
 }
 
 func fontFaceSrc(uniqueID string, fontFamily string, fontFiles map[string]FontFileData) string {
-	css := fmt.Sprintf("src: local('%s')", fontFamily)
-	for _, fontFileData := range fontFiles {
-		css = css + fmt.Sprintf(`,url('/font/%s.%s') format('%s')`,
+	css := fmt.Sprintf("src: ")
+	for fontFileIndex, fontFileData := range fontFiles {
+		if(fontFileIndex > 0) {
+			css = css + ', '
+		}
+		css = css + fmt.Sprintf(`url('/font/%s.%s') format('%s')`,
 			url.QueryEscape(uniqueID), url.QueryEscape(fontFileData.Extension), fontFileData.CSSFormat)
 	}
 
