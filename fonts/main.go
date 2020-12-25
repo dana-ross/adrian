@@ -187,6 +187,8 @@ func fontCSSFormat(fileType string) string {
 	switch fileType {
 	case "ttf":
 		return "truetype"
+	case "otf":
+		return "opentype"
 	default:
 		return fileType
 	}
