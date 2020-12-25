@@ -3,9 +3,9 @@ package main
 import (
 	"net/http"
 
-	adrianMiddleware "github.com/daveross/adrian/middleware"
+	adrianMiddleware "github.com/dana-ross/adrian/middleware"
 
-	adrianConfig "github.com/daveross/adrian/config"
+	adrianConfig "github.com/dana-ross/adrian/config"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 )

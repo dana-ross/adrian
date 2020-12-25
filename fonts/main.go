@@ -13,7 +13,7 @@ import (
 	"strings"
 
 	"github.com/ConradIrwin/font/sfnt"
-	adrianConfig "github.com/daveross/adrian/config"
+	adrianConfig "github.com/dana-ross/adrian/config"
 )
 
 // FontFileData describes a font (format) belonging to a font family
