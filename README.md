@@ -2,7 +2,7 @@
 
 # Adrian: A platform for hosting web fonts</h1>
 
-[![CodeFactor](https://www.codefactor.io/repository/github/daveross/adrian/badge)](https://www.codefactor.io/repository/github/daveross/adrian) ![GitHub](https://img.shields.io/github/license/daveross/adrian) ![GitHub release (latest by date)](https://img.shields.io/github/v/release/daveross/adrian)
+[![CodeFactor](https://www.codefactor.io/repository/github/dana-ross/adrian/badge)](https://www.codefactor.io/repository/github/dana-ross/adrian) ![GitHub](https://img.shields.io/github/license/dana-ross/adrian) ![GitHub release (latest by date)](https://img.shields.io/github/v/release/dana-ross/adrian)
 
 Meet my friend Adrian! 
 
@@ -23,7 +23,7 @@ Did you actually read the license for that font you bought, and your head is spi
 
 ### Installing
 
-1. Grab the most recent [Adrian release](https://github.com/daveross/adrian/releases) for your operating system. Extract the files somewhere on your server or local development environment.
+1. Grab the most recent [Adrian release](https://github.com/dana-ross/adrian/releases) for your operating system. Extract the files somewhere on your server or local development environment.
 1. Copy `adrian.yaml.example` to a new file named `adrian.yaml`
 1. Edit `adrian.yaml` to configure Adrian
 1. Run `adrian` to begin serving
@@ -114,11 +114,11 @@ The `display` query parameter allows you to set the [`font-display`](https://dev
 
 ## Contributing
 
-Please consider opening a [Pull Request](https://github.com/daveross/adrian/pulls) to submit changes to this project.
+Please consider opening a [Pull Request](https://github.com/dana-ross/adrian/pulls) to submit changes to this project.
 
 ## Versioning
 
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/daveross/adrian/tags). 
+We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/dana-ross/adrian/tags). 
 
 ## Authors
 

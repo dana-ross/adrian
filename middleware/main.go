@@ -2,7 +2,7 @@ package middleware
 
 import (
 	"github.com/labstack/echo"
-	adrianConfig "github.com/daveross/adrian/config"
+	adrianConfig "github.com/dana-ross/adrian/config"
 	"strconv"
 )
 

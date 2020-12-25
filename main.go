@@ -15,8 +15,8 @@ import (
 	"strings"
 	"time"
 
-	adrianConfig "github.com/daveross/adrian/config"
-	adrianFonts "github.com/daveross/adrian/fonts"
+	adrianConfig "github.com/dana-ross/adrian/config"
+	adrianFonts "github.com/dana-ross/adrian/fonts"
 
 	"github.com/labstack/echo"
 )

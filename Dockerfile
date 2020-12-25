@@ -2,15 +2,15 @@ FROM golang
 
 EXPOSE 80/tcp 443/tcp
 
-RUN mkdir -p /go/src/github.com/daveross/adrian
+RUN mkdir -p /go/src/github.com/dana-ross/adrian
 
-ADD . /go/src/github.com/daveross/adrian
+ADD . /go/src/github.com/dana-ross/adrian
 
-RUN cd /go/src/github.com/daveross/adrian && go get -v ./... && go build .
+RUN cd /go/src/github.com/dana-ross/adrian && go get -v ./... && go build .
 
 FROM alpine:latest
 
-COPY --from=0 /go/src/github.com/daveross/adrian/adrian .
+COPY --from=0 /go/src/github.com/dana-ross/adrian/adrian .
 
 RUN apk add libc6-compat
 
