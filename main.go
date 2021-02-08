@@ -19,6 +19,7 @@ import (
 	adrianFonts "github.com/dana-ross/adrian/fonts"
 
 	"github.com/labstack/echo"
+	"github.com/labstack/echo/middleware"
 )
 
 func main() {
@@ -43,6 +44,12 @@ func main() {
 	}
 	log.Println("Initializing web server")
 	e := Instantiate(config)
+
+	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
+		Format: "${remote_ip} - - [${time_custom}] \"${method} ${path} ${protocol}\" ${status} ${bytes_out} \"${user_agent}\"\n",
+		CustomTimeFormat: "02/Jan/2006:03:04:05 -0700",
+	}))
+
 	log.Println("Loading fonts and starting watchers")
 	for _, folder := range config.Global.Directories {
 		adrianFonts.FindFonts(folder, config)
