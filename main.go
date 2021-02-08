@@ -42,9 +42,11 @@ func main() {
 	log.Println("Initializing web server")
 	e := Instantiate(config)
 
+	accessLog := openAccessLog(config.Global.Logs.Access)
 	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
 		Format: "${remote_ip} - - [${time_custom}] \"${method} ${path} ${protocol}\" ${status} ${bytes_out} \"${user_agent}\"\n",
 		CustomTimeFormat: "02/Jan/2006:03:04:05 -0700",
+		Output: accessLog,
 	}))
 
 	log.Println("Loading fonts and starting watchers")
@@ -53,7 +55,6 @@ func main() {
 		adrianFonts.InstantiateWatcher(folder, config)
 	}
 
-	accessLog := openAccessLog(config.Global.Logs.Access)
 
 	log.Println("Defining paths")
 
