@@ -6,14 +6,11 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"net/http/httputil"
 	"net/url"
 	"os"
-	"os/user"
 	"path/filepath"
 	"strconv"
 	"strings"
-	"time"
 
 	adrianConfig "github.com/dana-ross/adrian/config"
 	adrianFonts "github.com/dana-ross/adrian/fonts"
@@ -89,19 +86,11 @@ func registerCSSPath(e *echo.Echo, accessLog *os.File) {
 			}
 			fontData, err := adrianFonts.GetFont(fontFamilyName)
 			if err != nil {
-				_, err := accessLog.WriteString(formatAccessLogMessage(c, 404, 0) + "\n")
-				if err != nil {
-					log.Fatal(fmt.Sprintf("Error writing to access log: %s", err))
-				}
 				return return404(c)
 			}
 			fontsCSS = fontsCSS + adrianFonts.FontFaceCSS(fontData, fontWeights, display)
 		}
 		writeToCache(c, fontsCSS)
-		_, err := accessLog.WriteString(formatAccessLogMessage(c, 200, len(fontsCSS)) + "\n")
-		if err != nil {
-			log.Fatal(fmt.Sprintf("Error writing to access log: %s", err))
-		}
 		return c.String(http.StatusOK, fontsCSS)
 	})
 
@@ -112,10 +101,6 @@ func registerFontPath(e *echo.Echo, accessLog *os.File) {
 	e.GET("/font/:filename/", func(c echo.Context) error {
 		filename, error := url.QueryUnescape(c.Param("filename"))
 		if error != nil {
-			_, err := accessLog.WriteString(formatAccessLogMessage(c, 404, 0) + "\n")
-			if err != nil {
-				log.Fatal(fmt.Sprintf("Error writing to access log: %s", err))
-			}
 			return return404(c)
 		}
 
@@ -130,11 +115,6 @@ func registerFontPath(e *echo.Echo, accessLog *os.File) {
 			return outputFont(c, "font/opentype", accessLog)
 		}
 		
-		_, err := accessLog.WriteString(formatAccessLogMessage(c, 404, 0) + "\n")
-		if err != nil {
-			log.Fatal(fmt.Sprintf("Error writing to access log: %s", err))
-		}
-
 		return return404(c)
 	})
 	return
@@ -151,19 +131,10 @@ func basename(s string) string {
 func outputFont(c echo.Context, mimeType string, accessLog *os.File) error {
 	filename, error := url.QueryUnescape(c.Param("filename"))
 	if error != nil {
-		_, err := accessLog.WriteString(formatAccessLogMessage(c, 404, 0) + "\n")
-		if err != nil {
-			log.Fatal(fmt.Sprintf("Error writing to access log: %s", err))
-		}
-
 		return return404(c)
 	}
 	fontVariant, err := adrianFonts.GetFontVariantByUniqueID(basename(filename))
 	if err != nil {
-		_, err := accessLog.WriteString(formatAccessLogMessage(c, 404, 0) + "\n")
-		if err != nil {
-			log.Fatal(fmt.Sprintf("Error writing to access log: %s", err))
-		}
 		return return404(c)
 	}
 
@@ -179,11 +150,6 @@ func outputFont(c echo.Context, mimeType string, accessLog *os.File) error {
 				status := make(map[string]string)
 				status["message"] = "Not Modified"
 				
-				_, err := accessLog.WriteString(formatAccessLogMessage(c, 304, 0) + "\n")
-				if err != nil {
-					log.Fatal(fmt.Sprintf("Error writing to access log: %s", err))
-				}
-
 				return c.JSON(http.StatusNotModified, status)	
 			}
 		}
@@ -197,11 +163,6 @@ func outputFont(c echo.Context, mimeType string, accessLog *os.File) error {
 	c.Response().Header().Set("Content-Transfer-Encoding", "binary")
 	c.Response().Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s\"", filename))
 	c.Response().Header().Set("ETag", fontFileData.MD5)
-
-	_, err = accessLog.WriteString(formatAccessLogMessage(c, 200, len(fontBinary)) + "\n")
-	if err != nil {
-		log.Fatal(fmt.Sprintf("Error writing to access log: %s", err))
-	}
 	
 	return c.Blob(http.StatusOK, mimeType, fontBinary)
 
@@ -227,37 +188,4 @@ func openAccessLog(path string) *os.File {
 	}
 	
 	return f
-}
-
-// formatAccessLogMessage formats access log messages in Common Log Format
-func formatAccessLogMessage(c echo.Context, responseStatus int, responseLength int) string {
-	currentUser, err := user.Current()
-	if err != nil {
-		log.Fatal("Can't retrieve current user")
-	}
-
-	loggedResponseLength := strconv.Itoa(responseLength)
-	if(responseLength == 0) {
-		loggedResponseLength = "-" 
-	}
-	
-	timeNow := time.Now()
-
-	dump, err := httputil.DumpRequest(c.Request(), false)
-	requestStatusLine := strings.Split(string(dump), "\n")[0]
-	requestStatusLine = strings.Replace(requestStatusLine, "\r", "", -1)
-
-
-	logMessage := fmt.Sprintf(
-		"%s - %s [%s] \"%s\" %d %s \"%s\"",
-		c.RealIP(),
-		currentUser.Username,
-		timeNow.Format("02/Jan/2006:15:04:05 -0700"),
-		requestStatusLine,
-		responseStatus,
-		loggedResponseLength,
-		c.Request().UserAgent(),
-	)
-
-	return logMessage
 }
