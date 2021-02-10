@@ -47,7 +47,12 @@ func main() {
 		CustomTimeFormat: "02/Jan/2006:03:04:05 -0700",
 		Output: accessLog,
 	}))
-	defer accessLog.Close()
+	defer func() {
+		err := accessLog.Close()
+		if err != nil {
+		   log.Printf("error closing the access log: %s", err)
+		}
+	  }()
 
 	log.Println("Loading fonts and starting watchers")
 	for _, folder := range config.Global.Directories {

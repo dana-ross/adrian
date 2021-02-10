@@ -175,7 +175,12 @@ func calcFileMD5(filePath string) string {
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer file.Close()
+	defer func() {
+		err := file.Close()
+		if err != nil {
+		   log.Printf("error closing the font file: %s", err)
+		}
+	  }()
 
 	hash := md5.New() // #nosec
 	if _, err := io.Copy(hash, file); err != nil {
