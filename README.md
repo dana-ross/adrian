@@ -72,6 +72,22 @@ global:
 
 The TCP/IP port Adrian will listen to. Defaults to port 80.
 
+##### https:
+
+IF HTTPS support is desired, configure it here.
+
+###### port: &lt;integer&gt;
+
+The TCP/IP port Adrian will listen to for HTTPS. Defaults to port 443.
+
+###### cert: &lt;string&gt;
+
+Path/Filename of a TLS certificate file to use.
+
+###### key: &lt;string&gt;
+
+Path/Filename of a TLS key file to use.
+
 ##### domains
 
 A whitelist of domains allowed to use fonts hosted by this instance
