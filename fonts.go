@@ -1,19 +1,18 @@
-package fonts
+package main
 
 import (
-	"crypto/sha256"
 	"crypto/md5"
+	"crypto/sha256"
 	"encoding/hex"
 	"errors"
+	"io"
 	"log"
 	"os"
-	"io"
 	"path"
 	"regexp"
 	"strings"
 
 	"github.com/ConradIrwin/font/sfnt"
-	adrianConfig "github.com/dana-ross/adrian/config"
 )
 
 // FontFileData describes a font (format) belonging to a font family
@@ -55,7 +54,7 @@ var fonts = make(map[string]FontData)
 var uniqueIDXref = make(map[string]*FontVariant)
 
 // LoadFont loads a font into memory
-func LoadFont(filePath string, config adrianConfig.Config) {
+func LoadFont(filePath string, config Config) {
 
 	fontFormat := GetCanonicalExtension(filePath)
 	if _, ok := supportedFormats[fontFormat]; !ok {
@@ -156,7 +155,7 @@ func GetFontVariantByUniqueID(uniqueID string) (fontVariant *FontVariant, err er
 }
 
 // calcUniqueID generates a unique ID for a font, optionally obfuscating it
-func calcUniqueID(fontVariant FontVariant, config adrianConfig.Config) string {
+func calcUniqueID(fontVariant FontVariant, config Config) string {
 	if config.Global.ObfuscateFilenames {
 		hash := sha256.New()
 		hash.Write([]byte(fontVariant.Name))

@@ -1,4 +1,4 @@
-package config
+package main
 
 import (
 	"fmt"
@@ -13,6 +13,11 @@ type Config struct {
 	Global struct {
 		Debug                bool
 		Port                 uint16
+		HTTPS                struct {
+			Port uint16
+			Cert string
+			Key  string
+		}
 		Domains              []string
 		AllowedOrigins       []string
 		Directories          []string
