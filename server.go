@@ -3,15 +3,12 @@ package main
 import (
 	"net/http"
 
-	adrianMiddleware "github.com/dana-ross/adrian/middleware"
-
-	adrianConfig "github.com/dana-ross/adrian/config"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 )
 
 // Instantiate returns a pre-configured Echo instance
-func Instantiate(config adrianConfig.Config) *echo.Echo {
+func Instantiate(config Config) *echo.Echo {
 
 	e := echo.New()
 	e.HideBanner = true
@@ -28,8 +25,8 @@ func Instantiate(config adrianConfig.Config) *echo.Echo {
 		Level: 5,
 	}))
 
-	e.Use(adrianMiddleware.SetServerHeader)
-	e.Use(adrianMiddleware.SetCacheControlHeaders(config))
+	e.Use(SetServerHeader)
+	e.Use(SetCacheControlHeaders(config))
 
 	e.Use(readFromCache)
 

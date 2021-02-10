@@ -11,13 +11,11 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
-
-	adrianConfig "github.com/dana-ross/adrian/config"
-	adrianFonts "github.com/dana-ross/adrian/fonts"
+	"sync"
 
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
-  //"golang.org/x/crypto/acme/autocert"
+	//"golang.org/x/crypto/acme/autocert"
 )
 
 func main() {
@@ -34,11 +32,11 @@ func main() {
 
 	log.Println("Starting Adrian 2.2.3")
 	log.Println("Loading adrian.yaml")
-	var config adrianConfig.Config
+	var config Config
 	if *configParam != "" {
-		config = adrianConfig.LoadConfig(*configParam)
+		config = LoadConfig(*configParam)
 	} else {
-		config = adrianConfig.LoadConfig("./adrian.yaml")
+		config = LoadConfig("./adrian.yaml")
 	}
 	log.Println("Initializing web server")
 	e := Instantiate(config)
@@ -49,11 +47,12 @@ func main() {
 		CustomTimeFormat: "02/Jan/2006:03:04:05 -0700",
 		Output: accessLog,
 	}))
+	defer accessLog.Close()
 
 	log.Println("Loading fonts and starting watchers")
 	for _, folder := range config.Global.Directories {
-		adrianFonts.FindFonts(folder, config)
-		adrianFonts.InstantiateWatcher(folder, config)
+		FindFonts(folder, config)
+		InstantiateWatcher(folder, config)
 	}
 
 
@@ -63,10 +62,20 @@ func main() {
 	registerCSSPath(e, accessLog)
 	registerFontPath(e, accessLog)
 
-	// log.Printf("Listening on port %d", config.Global.Port)
-	// e.Logger.Fatal(e.Start(fmt.Sprintf(":%d", config.Global.Port)))
-  log.Printf("Listening on port %d", config.Global.HTTPSPort)
-  e.Logger.Fatal(e.StartAutoTLS(fmt.Sprintf(":%d", config.Global.HTTPSPort)))
+	var waitGroup sync.WaitGroup
+	waitGroup.Add(2)
+	go func(){
+		log.Printf("Listening on port %d", config.Global.Port)
+		e.Logger.Fatal(e.Start(fmt.Sprintf(":%d", config.Global.Port)))
+	}()
+
+	go func(){
+		log.Printf("Listening on port %d", config.Global.HTTPSPort)
+		e.Logger.Fatal(e.StartAutoTLS(fmt.Sprintf(":%d", config.Global.HTTPSPort)))
+	}()
+
+	waitGroup.Wait()
+
 }
 
 func registerCSSPath(e *echo.Echo, accessLog *os.File) {
@@ -88,11 +97,11 @@ func registerCSSPath(e *echo.Echo, accessLog *os.File) {
 				}
 				fontWeights = uniqueInts(fontWeights)
 			}
-			fontData, err := adrianFonts.GetFont(fontFamilyName)
+			fontData, err := GetFont(fontFamilyName)
 			if err != nil {
 				return return404(c)
 			}
-			fontsCSS = fontsCSS + adrianFonts.FontFaceCSS(fontData, fontWeights, display)
+			fontsCSS = fontsCSS + FontFaceCSS(fontData, fontWeights, display)
 		}
 		writeToCache(c, fontsCSS)
 		return c.String(http.StatusOK, fontsCSS)
@@ -137,14 +146,14 @@ func outputFont(c echo.Context, mimeType string, accessLog *os.File) error {
 	if error != nil {
 		return return404(c)
 	}
-	fontVariant, err := adrianFonts.GetFontVariantByUniqueID(basename(filename))
+	fontVariant, err := GetFontVariantByUniqueID(basename(filename))
 	if err != nil {
 		return return404(c)
 	}
 
-	fontFileData, ok := fontVariant.Files[adrianFonts.GetCanonicalExtension(filename)]
+	fontFileData, ok := fontVariant.Files[GetCanonicalExtension(filename)]
 	if !ok {
-		log.Fatal("Invalid font format" + adrianFonts.GetCanonicalExtension(filename))
+		log.Fatal("Invalid font format" + GetCanonicalExtension(filename))
 	}
 
 	for i := range c.Request().Header["If-None-Match"] {
