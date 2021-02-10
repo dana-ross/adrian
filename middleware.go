@@ -1,9 +1,9 @@
-package middleware
+package main
 
 import (
-	"github.com/labstack/echo"
-	adrianConfig "github.com/dana-ross/adrian/config"
 	"strconv"
+
+	"github.com/labstack/echo"
 )
 
 // SetServerHeader sets a Server header
@@ -15,7 +15,7 @@ func SetServerHeader(next echo.HandlerFunc) echo.HandlerFunc {
 }
 
 // SetCacheControlHeaders sets headers for control over caching
-func SetCacheControlHeaders(config adrianConfig.Config) func(echo.HandlerFunc) echo.HandlerFunc {
+func SetCacheControlHeaders(config Config) func(echo.HandlerFunc) echo.HandlerFunc {
 	return func (next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 			c.Response().Header().Set("Cache-Control", "max-age=" + strconv.FormatUint(uint64(config.Global.CacheControlLifetime), 10) + ", public")
