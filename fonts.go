@@ -159,7 +159,10 @@ func GetFontVariantByUniqueID(uniqueID string) (fontVariant *FontVariant, err er
 func calcUniqueID(fontVariant FontVariant, config Config) string {
 	if config.Global.ObfuscateFilenames {
 		hash := sha256.New()
-		hash.Write([]byte(fontVariant.Name))
+		_, err := hash.Write([]byte(fontVariant.Name))
+		if err != nil {
+			log.Fatal(err)
+		}
 		return hex.EncodeToString(hash.Sum(nil))
 	}
 
