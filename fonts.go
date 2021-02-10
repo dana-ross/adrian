@@ -177,7 +177,7 @@ func calcFileMD5(filePath string) string {
 	}
 	defer file.Close()
 
-	hash := md5.New()
+	hash := md5.New() // #nosec
 	if _, err := io.Copy(hash, file); err != nil {
 		log.Fatal(err)
 	}
