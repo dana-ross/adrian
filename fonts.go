@@ -1,7 +1,7 @@
 package main
 
 import (
-	"crypto/md5"
+	"crypto/md5" // #nosec
 	"crypto/sha256"
 	"encoding/hex"
 	"errors"
