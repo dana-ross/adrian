@@ -14,6 +14,8 @@ type Config struct {
 		Debug                bool
 		Port                 uint16
 		HTTPSPort            uint16
+		HTTPSCert            string
+		HTTPSKey             string
 		Domains              []string
 		AllowedOrigins       []string
 		Directories          []string

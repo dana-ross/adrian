@@ -64,15 +64,44 @@ func main() {
 
 	var waitGroup sync.WaitGroup
 	waitGroup.Add(2)
-	go func(){
+	go func(wg *sync.WaitGroup){
+		defer wg.Done()
 		log.Printf("Listening on port %d", config.Global.Port)
 		e.Logger.Fatal(e.Start(fmt.Sprintf(":%d", config.Global.Port)))
-	}()
+	}(&waitGroup)
 
-	go func(){
+	go func(wg *sync.WaitGroup){
+		defer wg.Done()
+		if(config.Global.HTTPSCert == "") {
+			log.Printf("Missing HTTPSCert setting")
+			wg.Done()
+			return
+		}
+		_, HTTPSCertErr := os.Stat(config.Global.HTTPSCert)
+		if os.IsNotExist(HTTPSCertErr) {
+			log.Printf("HTTPSCert file %s not found", config.Global.HTTPSCert)
+			wg.Done()
+			return
+		}
+		if(config.Global.HTTPSKey == "") {
+			log.Printf("Missing HTTPSKey setting")
+			wg.Done()
+			return
+		}
+		_, HTTPSKeyErr := os.Stat(config.Global.HTTPSKey)
+		if os.IsNotExist(HTTPSKeyErr) {
+			log.Printf("HTTPSKey file %s not found", config.Global.HTTPSKey)
+			wg.Done()
+			return
+		}
+
+		log.Printf("Loading HTTPS Certificate %s", config.Global.HTTPSCert)
+		log.Printf("Loading HTTPS Key %s", config.Global.HTTPSKey)
 		log.Printf("Listening on port %d", config.Global.HTTPSPort)
-		e.Logger.Fatal(e.StartAutoTLS(fmt.Sprintf(":%d", config.Global.HTTPSPort)))
-	}()
+
+		// e.Logger.Fatal(e.StartAutoTLS(fmt.Sprintf(":%d", config.Global.HTTPSPort)))
+		e.Logger.Fatal(e.StartTLS(fmt.Sprintf(":%d", config.Global.HTTPSPort), config.Global.HTTPSCert, config.Global.HTTPSKey))
+	}(&waitGroup)
 
 	waitGroup.Wait()
 
