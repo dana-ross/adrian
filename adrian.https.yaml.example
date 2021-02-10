@@ -6,7 +6,7 @@ global:
   # HTTPS support
   https:
     # HTTPS port number Adrian responds to
-    port: 4443
+    port: 443
     # TLS Certificate file
     cert: "cert.pem"
     # TLS Key file
