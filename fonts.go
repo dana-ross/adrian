@@ -9,6 +9,7 @@ import (
 	"log"
 	"os"
 	"path"
+	"path/filepath"
 	"regexp"
 	"strings"
 
@@ -61,7 +62,7 @@ func LoadFont(filePath string, config Config) {
 		return
 	}
 
-	file, err := os.Open(filePath)
+	file, err := os.Open(filepath.Clean(filePath))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -166,8 +167,8 @@ func calcUniqueID(fontVariant FontVariant, config Config) string {
 }
 
 // calcFileMD5 calculates the MD5 hash of a file
-func calcFileMD5(filepath string) string {
-	file, err := os.Open(filepath)
+func calcFileMD5(filePath string) string {
+	file, err := os.Open(filepath.Clean(filePath))
 	if err != nil {
 		log.Fatal(err)
 	}
