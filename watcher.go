@@ -1,4 +1,4 @@
-package fonts
+package main
 
 import (
 	"fmt"
@@ -7,12 +7,11 @@ import (
 	"path"
 	"time"
 
-	adrianConfig "github.com/dana-ross/adrian/config"
 	"github.com/fsnotify/fsnotify"
 )
 
 // FindFonts loads all the fonts in a directory
-func FindFonts(fontsPath string, config adrianConfig.Config) {
+func FindFonts(fontsPath string, config Config) {
 	filesInfo, err := ioutil.ReadDir(fontsPath)
 
 	if err != nil {
@@ -27,7 +26,7 @@ func FindFonts(fontsPath string, config adrianConfig.Config) {
 }
 
 // InstantiateWatcher is a thing
-func InstantiateWatcher(path string, config adrianConfig.Config) {
+func InstantiateWatcher(path string, config Config) {
 	go func() {
 		watcher, err := fsnotify.NewWatcher()
 		if err != nil {
