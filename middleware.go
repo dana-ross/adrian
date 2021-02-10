@@ -9,7 +9,7 @@ import (
 // SetServerHeader sets a Server header
 func SetServerHeader(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		c.Response().Header().Set(echo.HeaderServer, "Adrian 2.1.1")
+		c.Response().Header().Set(echo.HeaderServer, "Adrian 3.0.0")
 		return next(c)
 	}
 }
