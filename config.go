@@ -14,6 +14,7 @@ type Config struct {
 		Debug                bool
 		Port                 uint16
 		HTTPS                struct {
+			Auto bool
 			Port uint16
 			Cert string
 			Key  string
