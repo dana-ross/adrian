@@ -39,7 +39,18 @@ global:
 
   # Port number Adrian responds to
   port: 80
-  
+
+  # HTTPS support
+  https:
+    # Enable automatic TLS certificate generation using LetEncrypt
+    auto: false
+    # HTTPS port number Adrian responds to
+    port: 4443
+    # TLS Certificate file (if not using LetsEncrypt)
+    cert: "cert.pem"
+    # TLS Key file (if not using LetsEncrypt)
+    key: "key.pem"
+
   # Adrian will only allow fonts to be used on these URLs (CORS functionality)
   domains:
     - example.com
@@ -62,6 +73,26 @@ global:
 ##### port: &lt;integer&gt;
 
 The TCP/IP port Adrian will listen to. Defaults to port 80.
+
+##### https:
+
+IF HTTPS support is desired, configure it here.
+
+###### auto: &lt;boolean&gt;
+
+Enable automatic TLS certificate generation using LetEncrypt
+
+###### port: &lt;integer&gt;
+
+The TCP/IP port Adrian will listen to for HTTPS. Defaults to port 443.
+
+###### cert: &lt;string&gt;
+
+Path/Filename of a TLS certificate file to use.
+
+###### key: &lt;string&gt;
+
+Path/Filename of a TLS key file to use.
 
 ##### domains
 

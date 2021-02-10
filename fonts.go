@@ -1,19 +1,19 @@
-package fonts
+package main
 
 import (
+	"crypto/md5" // #nosec
 	"crypto/sha256"
-	"crypto/md5"
 	"encoding/hex"
 	"errors"
+	"io"
 	"log"
 	"os"
-	"io"
 	"path"
+	"path/filepath"
 	"regexp"
 	"strings"
 
 	"github.com/ConradIrwin/font/sfnt"
-	adrianConfig "github.com/dana-ross/adrian/config"
 )
 
 // FontFileData describes a font (format) belonging to a font family
@@ -55,14 +55,14 @@ var fonts = make(map[string]FontData)
 var uniqueIDXref = make(map[string]*FontVariant)
 
 // LoadFont loads a font into memory
-func LoadFont(filePath string, config adrianConfig.Config) {
+func LoadFont(filePath string, config Config) {
 
 	fontFormat := GetCanonicalExtension(filePath)
 	if _, ok := supportedFormats[fontFormat]; !ok {
 		return
 	}
 
-	file, err := os.Open(filePath)
+	file, err := os.Open(filepath.Clean(filePath))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -156,10 +156,13 @@ func GetFontVariantByUniqueID(uniqueID string) (fontVariant *FontVariant, err er
 }
 
 // calcUniqueID generates a unique ID for a font, optionally obfuscating it
-func calcUniqueID(fontVariant FontVariant, config adrianConfig.Config) string {
+func calcUniqueID(fontVariant FontVariant, config Config) string {
 	if config.Global.ObfuscateFilenames {
 		hash := sha256.New()
-		hash.Write([]byte(fontVariant.Name))
+		_, err := hash.Write([]byte(fontVariant.Name))
+		if err != nil {
+			log.Fatal(err)
+		}
 		return hex.EncodeToString(hash.Sum(nil))
 	}
 
@@ -167,14 +170,19 @@ func calcUniqueID(fontVariant FontVariant, config adrianConfig.Config) string {
 }
 
 // calcFileMD5 calculates the MD5 hash of a file
-func calcFileMD5(filepath string) string {
-	file, err := os.Open(filepath)
+func calcFileMD5(filePath string) string {
+	file, err := os.Open(filepath.Clean(filePath))
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer file.Close()
+	defer func() {
+		err := file.Close()
+		if err != nil {
+		   log.Printf("error closing the font file: %s", err)
+		}
+	  }()
 
-	hash := md5.New()
+	hash := md5.New() // #nosec
 	if _, err := io.Copy(hash, file); err != nil {
 		log.Fatal(err)
 	}

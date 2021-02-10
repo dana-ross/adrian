@@ -1,4 +1,4 @@
-package fonts
+package main
 
 import (
 	"fmt"

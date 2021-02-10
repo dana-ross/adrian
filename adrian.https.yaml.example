@@ -1,0 +1,33 @@
+global:
+
+  # Port number Adrian responds to
+  port: 80
+
+  # HTTPS support
+  https:
+    # Enable automatic TLS certificate generation using LetEncrypt
+    auto: false
+    # HTTPS port number Adrian responds to
+    port: 4443
+    # TLS Certificate file (if not using LetsEncrypt)
+    cert: "cert.pem"
+    # TLS Key file (if not using LetsEncrypt)
+    key: "key.pem"
+  
+  # Adrian will only allow fonts to be used on these URLs (CORS functionality)
+  domains:
+    - example.com
+    
+  # Directories where Adrian should look for fonts
+  directories:
+    - /usr/share/fonts
+    
+  # If true, replace font filenames with hashes so they can't be guessed as easily
+  obfuscate filenames: false
+
+  # Used to set the cache-control header in responses
+  cache-control lifetime: 2628000
+
+  # Paths for writing logs to disk
+  logs:
+    access: "/var/log/adrian/access.log"
