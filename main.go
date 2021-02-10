@@ -17,6 +17,7 @@ import (
 
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
+  //"golang.org/x/crypto/acme/autocert"
 )
 
 func main() {
@@ -62,8 +63,10 @@ func main() {
 	registerCSSPath(e, accessLog)
 	registerFontPath(e, accessLog)
 
-	log.Printf("Listening on port %d", config.Global.Port)
-	e.Logger.Fatal(e.Start(fmt.Sprintf(":%d", config.Global.Port)))
+	// log.Printf("Listening on port %d", config.Global.Port)
+	// e.Logger.Fatal(e.Start(fmt.Sprintf(":%d", config.Global.Port)))
+  log.Printf("Listening on port %d", config.Global.HTTPSPort)
+  e.Logger.Fatal(e.StartAutoTLS(fmt.Sprintf(":%d", config.Global.HTTPSPort)))
 }
 
 func registerCSSPath(e *echo.Echo, accessLog *os.File) {

@@ -13,6 +13,7 @@ type Config struct {
 	Global struct {
 		Debug                bool
 		Port                 uint16
+    HTTPSPort            uint16
 		Domains              []string
 		AllowedOrigins       []string
 		Directories          []string
