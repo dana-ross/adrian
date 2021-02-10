@@ -39,7 +39,16 @@ global:
 
   # Port number Adrian responds to
   port: 80
-  
+
+  # HTTPS support
+  https:
+    # HTTPS port number Adrian responds to
+    port: 443
+    # TLS Certificate file
+    cert: "cert.pem"
+    # TLS Key file
+    key: "key.pem"
+
   # Adrian will only allow fonts to be used on these URLs (CORS functionality)
   domains:
     - example.com
