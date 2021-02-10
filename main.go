@@ -66,41 +66,41 @@ func main() {
 	waitGroup.Add(2)
 	go func(wg *sync.WaitGroup){
 		defer wg.Done()
-		log.Printf("Listening on port %d", config.Global.Port)
+		log.Printf("Listening for HTTP on port %d", config.Global.Port)
 		e.Logger.Fatal(e.Start(fmt.Sprintf(":%d", config.Global.Port)))
 	}(&waitGroup)
 
 	go func(wg *sync.WaitGroup){
 		defer wg.Done()
-		if(config.Global.HTTPSCert == "") {
-			log.Printf("Missing HTTPSCert setting")
+		if(config.Global.HTTPS.Cert == "") {
+			log.Printf("Missing HTTPS.Cert setting")
 			wg.Done()
 			return
 		}
-		_, HTTPSCertErr := os.Stat(config.Global.HTTPSCert)
+		_, HTTPSCertErr := os.Stat(config.Global.HTTPS.Cert)
 		if os.IsNotExist(HTTPSCertErr) {
-			log.Printf("HTTPSCert file %s not found", config.Global.HTTPSCert)
+			log.Printf("HTTPSCert file %s not found", config.Global.HTTPS.Cert)
 			wg.Done()
 			return
 		}
-		if(config.Global.HTTPSKey == "") {
+		if(config.Global.HTTPS.Key == "") {
 			log.Printf("Missing HTTPSKey setting")
 			wg.Done()
 			return
 		}
-		_, HTTPSKeyErr := os.Stat(config.Global.HTTPSKey)
+		_, HTTPSKeyErr := os.Stat(config.Global.HTTPS.Key)
 		if os.IsNotExist(HTTPSKeyErr) {
-			log.Printf("HTTPSKey file %s not found", config.Global.HTTPSKey)
+			log.Printf("HTTPSKey file %s not found", config.Global.HTTPS.Key)
 			wg.Done()
 			return
 		}
 
-		log.Printf("Loading HTTPS Certificate %s", config.Global.HTTPSCert)
-		log.Printf("Loading HTTPS Key %s", config.Global.HTTPSKey)
-		log.Printf("Listening on port %d", config.Global.HTTPSPort)
+		log.Printf("Loading HTTPS Certificate %s", config.Global.HTTPS.Cert)
+		log.Printf("Loading HTTPS Key %s", config.Global.HTTPS.Key)
+		log.Printf("Listening for HTTPS on port %d", config.Global.HTTPS.Port)
 
 		// e.Logger.Fatal(e.StartAutoTLS(fmt.Sprintf(":%d", config.Global.HTTPSPort)))
-		e.Logger.Fatal(e.StartTLS(fmt.Sprintf(":%d", config.Global.HTTPSPort), config.Global.HTTPSCert, config.Global.HTTPSKey))
+		e.Logger.Fatal(e.StartTLS(fmt.Sprintf(":%d", config.Global.HTTPS.Port), config.Global.HTTPS.Cert, config.Global.HTTPS.Key))
 	}(&waitGroup)
 
 	waitGroup.Wait()
